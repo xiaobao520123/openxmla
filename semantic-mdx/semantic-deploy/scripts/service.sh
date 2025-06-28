@@ -39,7 +39,7 @@ setJava
 
 function deleter_start() {
     # 参照startup.sh
-    JAVA_OPTS="-Xms1024m -Xmx1024m -XX:+UseG1GC -XX:G1HeapRegionSize=4m -XX:MaxMetaspaceSize=512m -Dfile.encoding=UTF-8"
+    JAVA_OPTS="-Xms1024m -Xmx1024m -XX:+UseG1GC -XX:+UnlockExperimentalVMOptions -XX:G1HeapRegionSize=4m -XX:MaxMetaspaceSize=512m -Dfile.encoding=UTF-8"
     SPRING_OPTS="-DINSIGHT_HOME=$3 -Dspring.config.name=insight,application -Dspring.profiles.active=$4
         -Dspring.config.location=classpath:/,file:$3/conf/"
     if [[ ! -d "$MDX_HOME/logs" ]]; then

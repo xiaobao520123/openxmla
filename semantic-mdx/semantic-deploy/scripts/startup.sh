@@ -105,7 +105,7 @@ fi
 echo "JVM memory minimum set as : ${jvm_xms}"
 echo "JVM memory maximum set as : ${jvm_xmx}"
 
-JAVA_OPTS="$jvm_xms $jvm_xmx -XX:+UseG1GC -XX:G1HeapRegionSize=4m -XX:MaxMetaspaceSize=512m -Dfile.encoding=UTF-8"
+JAVA_OPTS="$jvm_xms $jvm_xmx -XX:+UseG1GC -XX:+UnlockExperimentalVMOptions -XX:G1HeapRegionSize=4m -XX:MaxMetaspaceSize=512m -Dfile.encoding=UTF-8"
 
 LOG_FILE="file:$MDX_CONF/log4j2.xml"
 if [[ -e "${MDX_CONF}/log4j2.xml" ]];then
