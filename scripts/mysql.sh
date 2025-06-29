@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# 配置项
+MYSQL_ROOT_PASSWORD=xiaobao
+MYSQL_USER=xiaobao
+MYSQL_PASSWORD=xiaobao
+MYSQL_DATABASE=insight
+MYSQL_CONTAINER_NAME=mysql80
+MYSQL_VERSION=8.0
+MYSQL_PORT=3306
+MYSQL_DATA_DIR=$PWD/mysql80_data
+
+# 创建数据目录
+mkdir -p "$MYSQL_DATA_DIR"
+
+# 启动容器
+docker run -d \
+  --name $MYSQL_CONTAINER_NAME \
+  -e MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD \
+  -e MYSQL_USER=$MYSQL_USER \
+  -e MYSQL_PASSWORD=$MYSQL_PASSWORD \
+  -e MYSQL_DATABASE=$MYSQL_DATABASE \
+  -p $MYSQL_PORT:3306 \
+  -v "$MYSQL_DATA_DIR":/var/lib/mysql \
+  mysql:$MYSQL_VERSION

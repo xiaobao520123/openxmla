@@ -98,6 +98,7 @@ ENV/
 
 .idea
 .insight
+.vscode
 .tmp
 *.csv
 *.out
@@ -118,3 +119,4 @@ semantic-mdx/semantic-server/src/main/resources/static/*
 semantic-mdx/semantic-server/src/main/webapp/WEB-INF/schema/
 semantic-mdx/semantic-server/src/main/webapp/WEB-INF/*_datasources.xml
 /build/Kylin-MDX-*/
+/build/*.jar

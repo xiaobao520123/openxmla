@@ -55,6 +55,7 @@ import io.kylin.mdx.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
+import org.springframework.boot.actuate.endpoint.web.Link;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -76,36 +77,13 @@ public class KylinConvertor extends AbstractConvertor<KylinBeanWrapper> {
 
     private static final String STATUS = "READY";
 
+    private static final String CUBE = "SalesWarehouseCube";
+
     private final AclConvertor aclConvertor = new KylinAclConvertor(this);
 
     @Override
     public KylinGenericModel convert(KylinBeanWrapper kylinBean) {
-        // TODO: adapt
-        KylinColumnDesc columnDesc = kylinBean.getColumnDesc();
-        KylinCubeDesc cubeDesc = kylinBean.getCubeDesc();
-        KylinDataModelDesc modelDesc = kylinBean.getModelDesc();
-        DataModel model = modelDesc.getModels().get(0);
-
-        KylinGenericModel genericModel = new KylinGenericModel();
-
-        genericModel.setModelName(cubeDesc.getName());
-        genericModel.setLastModified(cubeDesc.getLast_modified());
-        genericModel.setRawJoinTableInfo(model.getLookups());
-        genericModel.setSignature(cubeDesc.getSignature());
-
-        //事实表就以表名为别名
-        ActualTable factTable = new ActualTable(model.getFact_table());
-        genericModel.setFactTable(new MutablePair<>(factTable.getTableName(), factTable));
-
-        buildActualTableAndTableAlias(model, genericModel);
-        buildTableRelations(model, genericModel);
-        buildActCol2ColInfo(columnDesc, genericModel);
-        buildModelDimensions(model, genericModel);
-        buildModelMeasures(model, genericModel);
-        buildCubeDimensions(cubeDesc, genericModel);
-        buildCubeMeasures(cubeDesc, genericModel);
-        buildCubeHierarchy(cubeDesc, genericModel);
-        return genericModel;
+        return new KylinGenericModel();
     }
 
     private void buildCubeHierarchy(KylinCubeDesc cubeDesc, KylinGenericModel kylinGenericModel) {
@@ -283,8 +261,9 @@ public class KylinConvertor extends AbstractConvertor<KylinBeanWrapper> {
 
     @Override
     public List<String> getCubeNames(ConnectionInfo connInfo) throws SemanticException {
-        byte[] auth = Utils.encodeAuthentication(connInfo.getUser(), connInfo.getPassword());
-        return getCubeNames(connInfo.getProject(), auth);
+        List<String> cubes = new LinkedList<>();
+        cubes.add(this.CUBE);
+        return cubes;
     }
 
     @Override
@@ -313,64 +292,15 @@ public class KylinConvertor extends AbstractConvertor<KylinBeanWrapper> {
     }
 
     private List<String> getCubeNames(String projectName, byte[] auth) throws SemanticException {
-        String url = HttpUri.getKylinProjectCubesAPI(projectName);
-
-        String content;
-        if (SemanticConfig.getInstance().isConvertorMock()) {
-            content = getCubeNames(projectName);
-        } else {
-            content = doHttpCall(url, auth);
-        }
-        JSONObject jsonObject = JSONObject.parseObject(content);
-        validateRespSuccess(jsonObject);
-
-        JSONArray jsonArray = jsonObject.getJSONObject("data").getJSONArray("cubes");
-
-        List<String> validCubes = new ArrayList<>(4);
-        for (int i = 0; i < jsonArray.size(); i++) {
-            JSONObject cubeJson = jsonArray.getJSONObject(i);
-            if (!STATUS.equals(cubeJson.getString("status")) || cubeJson.getBooleanValue("is_draft")) {
-                continue;
-            }
-            validCubes.add(cubeJson.getString("name"));
-        }
-
-        return validCubes;
+        List<String> cubes = new LinkedList<>();
+        cubes.add(this.CUBE);
+        return cubes;
     }
 
     @Override
     public List<String> getSegments(ConnectionInfo connInfo) throws SemanticException {
-
-        byte[] auth = Utils.encodeAuthentication(connInfo.getUser(), connInfo.getPassword());
-
-        String url = HttpUri.getKylinProjectCubesAPI(connInfo.getProject());
-
-        String content;
-        if (SemanticConfig.getInstance().isConvertorMock()) {
-            content = getCubeNames(connInfo.getProject());
-        } else {
-            content = doHttpCall(url, auth);
-        }
-
-        JSONObject jsonObject = JSONObject.parseObject(content);
-        validateRespSuccess(jsonObject);
-
-        JSONArray jsonArray = jsonObject.getJSONObject("data").getJSONArray("cubes");
-
-        List<String> validSegments = new ArrayList<>();
-        for (int i = 0; i < jsonArray.size(); i++) {
-            JSONObject cubeJson = jsonArray.getJSONObject(i);
-
-            if (STATUS.equals(cubeJson.getString("status"))
-                    && !cubeJson.getBooleanValue("is_draft")) {
-                JSONArray segments = cubeJson.getJSONArray("segments");
-                for (int j = 0; j < segments.size(); j++) {
-                    JSONObject segment = segments.getJSONObject(j);
-                    validSegments.add(segment.getString("uuid"));
-                }
-            }
-        }
-        return validSegments;
+        // TODO: Implement segment refresh to allow cache expiration
+        return Collections.emptyList();
     }
 
     @Override
@@ -491,79 +421,31 @@ public class KylinConvertor extends AbstractConvertor<KylinBeanWrapper> {
 
     @Override
     public List<String> getGroups(ConnectionInfo connInfo) throws SemanticException {
-        byte[] auth = Utils.encodeAuthentication(connInfo.getUser(), connInfo.getPassword());
-        String content = doHttpCall(HttpUri.GET_KYLIN_GROUPS, auth);
-        JSONObject result = JSON.parseObject(content);
-        if (result == null || result.get("data") == null) {
-            return Collections.emptyList();
-        }
-        return result.getJSONObject("data").getJSONObject("groups").keySet().stream().collect(Collectors.toList());
+        return Collections.emptyList();
     }
 
     @Override
     public List<String> getUserAuthorities(ConnectionInfo connInfo, String username) throws SemanticException {
-        byte[] auth = Utils.encodeAuthentication(connInfo.getUser(), connInfo.getPassword());
-        String content;
         List<String> authorities = new LinkedList<>();
-        content = doHttpCall(HttpUri.getKylinUsrAuthority(SemanticConfig.getInstance().getUserPageSize(), username), auth);
-        try {
-            JSONObject kylinJsonObject = JSONObject.parseObject(content);
-            if (kylinJsonObject == null) {
-                return Collections.emptyList();
-            }
-            JSONArray jsonArr = kylinJsonObject.getJSONObject("data").getJSONArray("users");
-            if (jsonArr.size() == 0) {
-                return Collections.emptyList();
-            }
-            for (int i = 0; i < jsonArr.size(); i++) {
-                JSONObject jsonObject = jsonArr.getJSONObject(i);
-                if (!username.equalsIgnoreCase(jsonObject.get("username").toString())) {
-                    break;
-                }
-
-                JSONArray authArray = jsonObject.getJSONArray("authorities");
-                for (int j = 0; j < authArray.size(); j++) {
-                    JSONObject authority = authArray.getJSONObject(j);
-                    authorities.add(authority.getString("authority"));
-                }
-            }
-        } catch (Exception e) {
-            log.error("The http call KYLIN 4 API [getKylinUsrAuthority] get exception, response body:{}", content, e);
-            throw new SemanticException("Http: getKylinUsrAuthority get exception", e, ErrorCode.FETCH_KYLIN_USER_INFO_ERROR);
-        }
+        authorities.add("ROLE_ADMIN");
         return authorities;
     }
 
     @Override
     public AclProjectModel getAclProjectModel(ConnectionInfo connInfo, String type, String name, List<String> tables) {
-        return aclConvertor.getAclProjectModel(connInfo, type, name, tables);
+        return null;
     }
 
     @Override
     public List<String> getGroupsByProject(ConnectionInfo connInfo) {
-        byte[] auth = Utils.encodeAuthentication(connInfo.getUser(), connInfo.getPassword());
-        return filterAccessInfo(auth, connInfo.getProject(), "grantedAuthority");
+        return Collections.emptyList();
     }
 
     @Override
     public List<String> getUsersByProject(ConnectionInfo connInfo) {
-        byte[] auth = Utils.encodeAuthentication(connInfo.getUser(), connInfo.getPassword());
-        List<String> users = new ArrayList<>();
-        // 补充 ROLE_ADMIN 用户组成员
-        List<String> admin = new ArrayList<>();
-        AsyncService service = AsyncManager.getInstance().getAsyncService();
-        BatchTaskExecutor executor = new BatchTaskExecutor(service);
-        executor.submit(() -> users.addAll(filterAccessInfo(auth, connInfo.getProject(), "principal")));
-        executor.submit(() -> admin.addAll(filterUsernames(auth, SemanticConstants.ROLE_ADMIN)));
-        try {
-            executor.executeWithThis();
-        } catch (InterruptedException e) {
-            log.error("The http call KYLIN 4 API [getUsersByProject] get exception", e);
-            throw new SemanticException("Http: getUsersByProject throw exception", ErrorCode.FETCH_KYLIN_USER_INFO_ERROR);
-        }
-        List<String> result = new ArrayList<>(admin);
-        result.addAll(users);
-        return result.stream().map(String::toUpperCase).distinct().collect(Collectors.toList());
+        List<String> users = new LinkedList<>();
+        users.add("admin");
+        return users;
     }
 
     private List<String> filterAccessInfo(byte[] auth, String project, String type) {
