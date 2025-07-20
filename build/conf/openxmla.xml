@@ -1,0 +1,7 @@
+<Schema name="SalesWarehouse">
+    <Cube name="SalesWarehouseCube">
+        <Table name="sales_wide" schema="public"/>
+
+        <Measure name="Quantity Sold" column="quantity_sold" aggregator="sum" datatype="Integer" formatString="#,###"/>
+    </Cube>
+</Schema>

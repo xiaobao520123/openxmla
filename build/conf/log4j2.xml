@@ -3,12 +3,12 @@
 
     <appenders>
         <Console name="console" target="SYSTEM_OUT">
-            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+            <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss,SSS} [%-5level] %X{qid}%c{1.}.%M - %m%n"/>
         </Console>
 
-        <RollingFile name="semantic" fileName="../logs/semantic.log"
-                     filePattern="../logs/semantic.log.%i">
+        <RollingFile name="semantic" fileName="${env:INSIGHT_HOME}/logs/semantic.log"
+                     filePattern="${env:INSIGHT_HOME}/logs/semantic.log.%i">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss,SSS} [%-5level] %X{qid}%c{1.}.%M - %m%n"/>
             <Policies>
                 <SizeBasedTriggeringPolicy size="256 MB"/>
@@ -16,8 +16,8 @@
             <DefaultRolloverStrategy max="10"/>
         </RollingFile>
 
-        <RollingFile name="mdx" fileName="../logs/mdx.log"
-                     filePattern="../logs/mdx.log.%i">
+        <RollingFile name="mdx" fileName="${env:INSIGHT_HOME}/logs/mdx.log"
+                     filePattern="${env:INSIGHT_HOME}/logs/mdx.log.%i">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss,SSS} [%-5level] %X{qid}%c{1.}.%M - %m%n"/>
             <Policies>
                 <SizeBasedTriggeringPolicy size="256 MB"/>
@@ -25,8 +25,8 @@
             <DefaultRolloverStrategy max="10"/>
         </RollingFile>
 
-        <RollingFile name="performance" fileName="../logs/performance.log"
-                     filePattern="../logs/performance.log.%i">
+        <RollingFile name="performance" fileName="${env:INSIGHT_HOME}/logs/performance.log"
+                     filePattern="${env:INSIGHT_HOME}/logs/performance.log.%i">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss,SSS} [%-5level] %X{qid}%c{1.}.%M - %m%n"/>
             <Policies>
                 <SizeBasedTriggeringPolicy size="256 MB"/>
@@ -34,8 +34,8 @@
             <DefaultRolloverStrategy max="10"/>
         </RollingFile>
 
-        <RollingFile name="jstack" fileName="../logs/jstack.log"
-                     filePattern="../logs/jstack.log.%i">
+        <RollingFile name="jstack" fileName="${env:INSIGHT_HOME}/logs/jstack.log"
+                     filePattern="${env:INSIGHT_HOME}/logs/jstack.log.%i">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss,SSS} [%-5level] %X{qid}%c{1.}.%M - %m%n"/>
             <Policies>
                 <SizeBasedTriggeringPolicy size="256 MB"/>
@@ -43,8 +43,8 @@
             <DefaultRolloverStrategy max="3"/>
         </RollingFile>
 
-        <RollingFile name="jmap" fileName="../logs/jmap.log"
-                     filePattern="../logs/jmap.log.%i">
+        <RollingFile name="jmap" fileName="${env:INSIGHT_HOME}/logs/jmap.log"
+                     filePattern="${env:INSIGHT_HOME}/logs/jmap.log.%i">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss,SSS} [%-5level] %X{qid}%c{1.}.%M - %m%n"/>
             <Policies>
                 <SizeBasedTriggeringPolicy size="256 MB"/>
@@ -52,8 +52,8 @@
             <DefaultRolloverStrategy max="3"/>
         </RollingFile>
 
-        <RollingFile name="top" fileName="../logs/top.log"
-                     filePattern="../logs/top.log.%i">
+        <RollingFile name="top" fileName="${env:INSIGHT_HOME}/logs/top.log"
+                     filePattern="${env:INSIGHT_HOME}/logs/top.log.%i">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss,SSS} [%-5level] %X{qid}%c{1.}.%M - %m%n"/>
             <Policies>
                 <SizeBasedTriggeringPolicy size="256 MB"/>
@@ -63,31 +63,31 @@
     </appenders>
 
     <loggers>
-        <logger name="io.kylin.mdx" level="INFO" additivity="false">
+        <logger name="io.kylin.mdx" level="DEBUG" additivity="false">
             <appender-ref ref="mdx"/>
         </logger>
-        <logger name="mondrian" level="INFO" additivity="false">
+        <logger name="mondrian" level="DEBUG" additivity="false">
             <appender-ref ref="mdx"/>
         </logger>
         <logger name="mondrian.sql" level="debug" additivity="false">
             <appender-ref ref="mdx"/>
         </logger>
-        <logger name="gateway" level="INFO" additivity="false">
+        <logger name="gateway" level="DEBUG" additivity="false">
             <appender-ref ref="mdx"/>
         </logger>
-        <logger name="performance" level="INFO" additivity="false">
+        <logger name="performance" level="DEBUG" additivity="false">
             <appender-ref ref="performance"/>
         </logger>
-        <logger name="diagnosis.jstack" level="INFO" additivity="false">
+        <logger name="diagnosis.jstack" level="DEBUG" additivity="false">
             <appender-ref ref="jstack"/>
         </logger>
-        <logger name="diagnosis.jmap" level="INFO" additivity="false">
+        <logger name="diagnosis.jmap" level="DEBUG" additivity="false">
             <appender-ref ref="jmap"/>
         </logger>
-        <logger name="diagnosis.top" level="INFO" additivity="false">
+        <logger name="diagnosis.top" level="DEBUG" additivity="false">
             <appender-ref ref="top"/>
         </logger>
-        <root level="INFO">
+        <root level="DEBUG">
             <appender-ref ref="semantic"/>
         </root>
     </loggers>
