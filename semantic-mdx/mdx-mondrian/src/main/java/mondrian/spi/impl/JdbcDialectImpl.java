@@ -1104,6 +1104,8 @@ public class JdbcDialectImpl implements Dialect {
             return DatabaseProduct.INTERBASE;
         } else if (upperProductName.equals("KYLIN")) {
             return DatabaseProduct.KYLIN;
+        } else if (upperProductName.equals("SQLITE")) {
+            return DatabaseProduct.SQLite;
         } else if (upperProductName.equals("LUCIDDB")
             || upperProductName.equals("OPTIQ"))
         {
@@ -1430,9 +1432,6 @@ public class JdbcDialectImpl implements Dialect {
         DatabaseProduct databaseProduct,
         Connection connection)
     {
-        if (databaseProduct.name().toUpperCase().equals(DatabaseProduct.KYLIN.name())) {
-            return false;
-        }
         Statement statement = null;
         ResultSet resultSet = null;
 

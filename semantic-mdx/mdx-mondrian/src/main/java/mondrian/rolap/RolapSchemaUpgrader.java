@@ -3549,6 +3549,7 @@ public class RolapSchemaUpgrader {
         xmlMeasure.formatString = xmlLegacyMeasure.formatString;
         xmlMeasure.formatter = xmlLegacyMeasure.formatter;
         xmlMeasure.description = xmlLegacyMeasure.description;
+        xmlMeasure.subfolder = xmlLegacyMeasure.displayFolder;
         xmlMeasure.table = null;
 
         convertAnnotations(xmlMeasure.children, xmlLegacyMeasure.annotations);

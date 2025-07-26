@@ -1018,6 +1018,12 @@ is the XML model for current Mondrian schemas.</p>
                 Default true.
             </Doc>
         </Attribute>
+        <Attribute name="displayFolder" type="String" required="false">
+            <Doc>
+                The folder in which this measure is displayed in the user
+                interface.
+            </Doc>
+        </Attribute>
         <Object name="annotations" type="Annotations" required="false">
             <Doc>Contains values of user-defined properties.</Doc>
         </Object>
