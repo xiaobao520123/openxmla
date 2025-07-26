@@ -1,7 +1,76 @@
-<Schema name="SalesWarehouse">
+<Schema name="SalesWarehouse" metamodelVersion="3">
     <Cube name="SalesWarehouseCube">
-        <Table name="sales_wide" schema="public"/>
+        <Table name="sales_wide" />
 
-        <Measure name="Quantity Sold" column="quantity_sold" aggregator="sum" datatype="Integer" formatString="#,###"/>
+        <!-- Time Dimension -->
+        <Dimension name="Time">
+            <Hierarchy hasAll="true">
+                <Level name="Year" column="year" type="Numeric" uniqueMembers="true" />
+                <Level name="Quarter" column="quarter" type="String" />
+                <Level name="Month" column="month" type="Numeric" />
+                <Level name="Day" column="day" type="Numeric" />
+            </Hierarchy>
+        </Dimension>
+
+        <!-- Location Dimension -->
+        <Dimension name="Location">
+            <Hierarchy hasAll="true">
+                <Level name="Country" column="country" type="String" uniqueMembers="true"/>
+                <Level name="Region" column="region" type="String"/>
+                <Level name="City" column="city" type="String"/>
+            </Hierarchy>
+        </Dimension>
+
+        <!-- Product Dimension -->
+        <Dimension name="Product">
+            <Hierarchy hasAll="true">
+                <Level name="Category" column="category" type="String" uniqueMembers="true"/>
+                <Level name="Subcategory" column="subcategory" type="String"/>
+                <Level name="Brand" column="brand" type="String"/>
+                <Level name="Product Name" column="product_name" type="String"/>
+            </Hierarchy>
+        </Dimension>
+
+        <!-- Customer Dimension -->
+        <Dimension name="Customer">
+            <Hierarchy hasAll="true">
+                <Level name="Segment" column="customer_segment" type="String"/>
+                <Level name="Customer Name" column="customer_name" type="String" uniqueMembers="true"/>
+            </Hierarchy>
+        </Dimension>
+
+        <!-- Sales Channel Dimension -->
+        <Dimension name="Sales Channel">
+            <Hierarchy hasAll="true">
+                <Level name="Channel" column="sales_channel" type="String"/>
+            </Hierarchy>
+        </Dimension>
+
+        <!-- Promotion Dimension -->
+        <Dimension name="Promotion">
+            <Hierarchy hasAll="true">
+                <Level name="Promotion Code" column="promotion_code" type="String"/>
+            </Hierarchy>
+        </Dimension>
+
+        <!-- Return Flag (Optional as a dimension) -->
+        <Dimension name="Return Status">
+            <Hierarchy hasAll="true">
+                <Level name="Is Returned" column="is_returned" type="Numeric" nameColumn="is_returned"/>
+            </Hierarchy>
+        </Dimension>
+
+        <!-- Measures -->
+        <Measure name="Sales Amount" column="sales_amount" aggregator="sum" formatString="#,##0.00" displayFolder="testFolderA"/>
+        <Measure name="Quantity Sold" column="quantity_sold" aggregator="sum" formatString="#,##0"/>
+        <Measure name="Discount" column="discount" aggregator="sum" formatString="$#,##0.00"/>
+        <Measure name="Profit" column="profit" aggregator="sum" formatString="$#,##0.00"/>
+        <Measure name="Cost" column="cost" aggregator="sum" formatString="$#,##0.00"/>
+        <Measure name="Return Count" column="is_returned" aggregator="sum" formatString="#,##0"/>
+
+        <CalculatedMember name="Net Sales" dimension="Measures" formula="[Measures].[Sales Amount] - [Measures].[Discount]">
+            <CalculatedMemberProperty name="FORMAT_STRING" value="$#,##0.00"/>
+            <CalculatedMemberProperty name="DISPLAY_FOLDER" value="testFolderB"/>
+        </CalculatedMember>
     </Cube>
 </Schema>

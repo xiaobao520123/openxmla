@@ -86,17 +86,14 @@ class MondrianOlap4jMeasure
 
     public String getDescription() {
         String folderName = "Calculated Measure";
+        Object subfolder = null;
         if (member instanceof RolapBaseCubeMeasure) {
-            folderName = ((RolapBaseCubeMeasure) member).getMeasureGroup().getName();
-            Object subfolder = ((RolapBaseCubeMeasure) member).getSubfolder();
-            if (subfolder != null) {
-                folderName = folderName + "@" + subfolder.toString();
-            }
+            subfolder = ((RolapBaseCubeMeasure) member).getSubfolder();
         } else if (member instanceof RolapHierarchy.RolapCalculatedMeasure) {
-            Object object = member.getPropertyValue(Property.DISPLAY_FOLDER);
-            if (object != null) {
-                folderName = object.toString();
-            }
+            subfolder = member.getPropertyValue(Property.DISPLAY_FOLDER);
+        }
+        if (subfolder != null) {
+            folderName = folderName + "@" + subfolder.toString();
         }
         return "displayFolder:" + folderName;
     }
