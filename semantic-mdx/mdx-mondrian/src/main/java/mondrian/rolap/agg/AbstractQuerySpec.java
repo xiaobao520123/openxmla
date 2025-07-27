@@ -177,11 +177,7 @@ public abstract class AbstractQuerySpec implements QuerySpec {
      * @return whether to sort query
      */
     protected boolean isOrdered() {
-        if (MondrianProperties.instance().CustomizeSql.get()
-                && getStar().getSqlQueryDialect().getDatabaseProduct().equals(Dialect.DatabaseProduct.KYLIN)) {
-            return true;
-        }
-        return false;
+        return MondrianProperties.instance().CustomizeSql.get();
     }
 
     public Pair<String, List<SqlStatement.Type>> generateSqlQuery(String desc) {

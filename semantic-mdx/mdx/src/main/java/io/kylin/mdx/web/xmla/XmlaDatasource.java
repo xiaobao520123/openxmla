@@ -1,27 +1,8 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-
 package io.kylin.mdx.web.xmla;
 
+import io.kylin.mdx.insight.common.SemanticConfig;
 import io.kylin.mdx.insight.common.SemanticException;
 import io.kylin.mdx.insight.common.util.AESWithECBEncryptor;
-import io.kylin.mdx.core.MdxConfig;
 import io.kylin.mdx.core.datasource.MdCatalog;
 import io.kylin.mdx.core.datasource.MdDatasource;
 import mondrian.olap.Util;
@@ -32,8 +13,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static io.kylin.mdx.insight.common.util.DatasourceUtils.getDatasourceName;
 import static io.kylin.mdx.insight.common.util.DatasourceUtils.getDatasourcePath;
@@ -56,9 +35,6 @@ public class XmlaDatasource {
     /**
      * 保存 username(delegate) + project -> last modified time
      */
-    private static final Map<String, Long> ACL_UPDATES = new ConcurrentHashMap<>();
-
-    private final MdxConfig config = MdxConfig.getInstance();
 
     private final String rootPath;
 
@@ -85,35 +61,10 @@ public class XmlaDatasource {
         createSchemaDir();
     }
 
-//    public void initDatasource() {
-//        initDatasource(loadMdnSchemas());
-//    }
-//
-//    public void initDatasource(MdnSchemaSet mdnSchemas) {
-//        if (CollectionUtils.isNotEmpty(mdnSchemas.getMdnSchemas())) {
-//            createDatasource(mdnSchemas);
-//            createMdnSchemas(mdnSchemas);
-//        }
-//    }
-
     public void initDatasource() {
         createDatasource();
         createMdnSchemas();
     }
-
-//    private MdnSchemaSet loadMdnSchemas() {
-//        ConnectionInfo connectionInfo = ConnectionInfo.builder()
-//                .user(username)
-//                .password(password)
-//                .project(project)
-//                .delegate(delegate)
-//                .build();
-//        if (MdxConfig.getInstance().isCreateSchemaFromDataSet()) {
-//            return new ModelManager().buildMondrianSchemaFromDataSet(connectionInfo);
-//        } else {
-//            return new ModelManager().buildMondrianSchemaByKylin(connectionInfo);
-//        }
-//    }
 
     private void createSchemaDir() {
         File file = new File(getSchemaDir());
@@ -127,11 +78,11 @@ public class XmlaDatasource {
     }
 
     private void createMdnSchemas() {
-        // Load schema from local file
-        String sourceSchemaFilePath = "/Users/xiaobao/Projects/openxmla/build/conf/openxmla.xml";
+        // Load schema
         String content;
         try {
-            content = new String(Files.readAllBytes(Paths.get(sourceSchemaFilePath)), "UTF-8");
+            String path = SemanticConfig.getInstance().getSchemaFilePath();
+            content = new String(Files.readAllBytes(Paths.get(path)), "UTF-8");
         } catch (IOException e) {
             throw new SemanticException("Can't serialize schema:" + catalogName);
         }
@@ -157,25 +108,14 @@ public class XmlaDatasource {
     }
 
     private String buildDatasourceInfo() {
-//        StringBuilder builder = new StringBuilder("Provider=mondrian;UseContentChecksum=true;Jdbc=jdbc:kylin://")
-//                .append(config.getKylinHost()).append(":").append(config.getKylinPort()).append("/").append(project)
-//                .append(";JdbcDrivers=org.apache.kylin.jdbc.Driver")
-//                .append(";JdbcUser=").append(username)
-//                .append(";JdbcPassword=").append(AESWithECBEncryptor.encrypt(password));
-
         // SQLite JDBC
-        String databaseFile = "/Users/xiaobao/sqlite_warehouse.data";
-
         StringBuilder builder = new StringBuilder("Provider=mondrian;UseContentChecksum=true")
-                .append(";Jdbc=jdbc:sqlite:").append(databaseFile)
-                .append(";JdbcDrivers=org.sqlite.JDBC")
+                .append(";Jdbc=").append(SemanticConfig.getInstance().getJDBC())
+                .append(";JdbcDrivers=").append(SemanticConfig.getInstance().getJDBCDriver())
                 .append(";JdbcUser=").append(username)
                 .append(";JdbcPassword=").append(AESWithECBEncryptor.encrypt(password));
         if (delegate != null) {
             builder.append(";JdbcDelegate=").append(delegate);
-        }
-        if ("https".equals(config.getKeProtocol())) {
-            builder.append(";ssl=true");
         }
         return builder.toString();
     }
@@ -199,5 +139,4 @@ public class XmlaDatasource {
     private String getSchemaDir() {
         return this.rootPath + "/schema/";
     }
-
 }

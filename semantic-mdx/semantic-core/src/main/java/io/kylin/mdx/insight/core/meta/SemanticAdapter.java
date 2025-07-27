@@ -58,7 +58,7 @@ public class SemanticAdapter {
     public List<String> getUserAuthority(ConnectionInfo connInfo) {
         List<String> authorities = new LinkedList<>();
         authorities.add(this.AUTHORITY);
-        return Collections.emptyList();
+        return authorities;
     }
 
     public List<String> getSegments(String project) {

@@ -40,18 +40,6 @@ public class MdxConfig {
         this.config = SemanticConfig.getInstance();
     }
 
-    public String getKylinHost() {
-        return config.getKylinHost();
-    }
-
-    public String getKylinPort() {
-        return config.getKylinPort();
-    }
-
-    public String getKeProtocol() {
-        return config.getKylinProtocol();
-    }
-
     public String getMdxHost() {
         return config.getMdxHost();
     }
@@ -76,24 +64,12 @@ public class MdxConfig {
         return config.getBooleanValue("insight.mdx.calculate-total-need", true);
     }
 
-    public boolean isEnableSortSqlResult() {
-        return config.getBooleanValue("insight.mdx.sql.orderby.enable", true);
-    }
-
-    public boolean isCreateSchemaFromDataSet() {
-        return config.getBooleanValue("insight.mdx.schema.create-from-dataset", true);
-    }
-
     public boolean isUpperAdminName() {
         return config.getBooleanValue("insight.mdx.upper-admin-name", true);
     }
 
     public boolean isUpperUserName() {
         return config.getBooleanValue("insight.mdx.upper-user-name", true);
-    }
-
-    public boolean isEnableSqlEngineHint() {
-        return config.getBooleanValue("insight.mdx.sql.calcite-engine-hint.enable", false);
     }
 
     // for develop, 不建议在生产环境使用
@@ -105,19 +81,4 @@ public class MdxConfig {
     public boolean isDisableRefreshSchema() {
         return config.getBooleanValue("insight.mdx.schema.refresh.disable", false);
     }
-
-    // for gateway, MDX Server 不使用
-
-    public boolean isJsonAutoArray() {
-        return config.getBooleanValue("insight.mdx.gateway.json.auto-array", true);
-    }
-
-    public boolean isEnableJsonTransfer() {
-        return config.getBooleanValue("insight.mdx.gateway.transfer.json.enable", false);
-    }
-
-    public int getJsonTransferThreshold() {
-        return config.getIntValue("insight.mdx.gateway.transfer.json.threshold", 10000);
-    }
-
 }
