@@ -86,24 +86,24 @@ public class SemanticConfig extends SemanticConfigBase {
         return getOptional("insight.kylin.port", "7070");
     }
 
-    public DatasourceTypeEnum getDatasourceType() {
-        return DatasourceTypeEnum.KYLIN;
+    public String getJDBC() {
+        return getOptional("insight.mdx.mondrian.jdbc", "jdbc:sqlite:/Users/xiaobao/sqlite_warehouse.data");
+    }
+
+    public String getJDBCDriver() {
+        return getOptional("insight.mdx.mondrian.jdbc.driver", "org.sqlite.JDBC");
+    }
+
+    public String getSchemaFilePath() {
+        return getOptional("insight.mdx.mondrian.schema.path", "/Users/xiaobao/Projects/openxmla/build/conf/openxmla.xml");
     }
 
     public String getProjectPageSize() {
         return getOptional("insight.semantic.meta.sync.project-page-size", "1000");
     }
 
-    public String getModelPageSize() {
-        return getOptional("insight.semantic.meta.sync.model-page-size", "1000");
-    }
-
     public String getUserPageSize() {
         return getOptional("insight.semantic.meta.sync.user-page-size", "100000");
-    }
-
-    public String getTablePageSize() {
-        return getOptional("insight.semantic.meta.sync.table-page-size", "10000");
     }
 
     public boolean isModelVersionVerifyEnable() {

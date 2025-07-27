@@ -203,7 +203,7 @@ public class SegmentLoader {
             int arity = defaultColumns.length;
             SortedSet<Comparable>[] axisValueSets =
                 getDistinctValueWorkspace(arity);
-            stmt = createExecuteSql(
+             stmt = createExecuteSql(
                     cellRequestCount,
                     groupingSetsList,
                     compoundPredicateList);

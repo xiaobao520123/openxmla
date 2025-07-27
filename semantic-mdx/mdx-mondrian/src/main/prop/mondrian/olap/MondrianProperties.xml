@@ -228,7 +228,6 @@
             <p>the implement class of CustomizeSqlQuery</p>
         </Description>
         <Type>String</Type>
-        <Default>io.kylin.mdx.web.mondrian.rolap.sql.KylinSqlQuery</Default>
     </PropertyDefinition>
     <PropertyDefinition>
         <Name>MaxPullSize</Name>

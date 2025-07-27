@@ -92,13 +92,6 @@
             <artifactId>mockito-all</artifactId>
             <scope>test</scope>
         </dependency>
-
-        <dependency>
-            <groupId>org.apache.kylin</groupId>
-            <artifactId>kylin-jdbc</artifactId>
-            <version>${kylin-jdbc.version}</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <repositories>

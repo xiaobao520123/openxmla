@@ -115,7 +115,7 @@ public class SqlQueryBuilder {
     }
 
     private static SqlQuery chooseSqlQuery(Dialect dialect) {
-        if (MondrianProperties.instance().CustomizeSql.get() && dialect.getDatabaseProduct().equals(Dialect.DatabaseProduct.KYLIN)) {
+        if (MondrianProperties.instance().CustomizeSql.get()) {
             String clazz = MondrianProperties.instance().CustomizeSqlClass.get();
             try {
                 Constructor constructor = Class.forName(clazz).getConstructor(Dialect.class);

@@ -14,7 +14,6 @@ import mondrian.olap.*;
 import mondrian.resource.MondrianResource;
 import mondrian.rolap.*;
 import mondrian.spi.*;
-import mondrian.spi.impl.KylinDialect;
 import mondrian.util.*;
 
 import org.apache.log4j.Logger;
@@ -246,8 +245,40 @@ public class JdbcSchema {
         }
     }
 
+    private static final Map<Types, SqlStatement.Type> TYPE_MAP;
+    static {
+        Map typeMapInitial = new HashMap<Types, SqlStatement.Type>();
+        typeMapInitial.put(Types.TINYINT, SqlStatement.Type.INT);
+        typeMapInitial.put(Types.SMALLINT, SqlStatement.Type.INT);
+        typeMapInitial.put(Types.INTEGER, SqlStatement.Type.INT);
+
+        typeMapInitial.put(Types.BOOLEAN, SqlStatement.Type.BOOLEAN);
+        typeMapInitial.put(Types.BIT, SqlStatement.Type.BOOLEAN);
+
+        typeMapInitial.put(Types.DOUBLE, SqlStatement.Type.DOUBLE);
+        typeMapInitial.put(Types.FLOAT, SqlStatement.Type.DOUBLE);
+        typeMapInitial.put(Types.REAL, SqlStatement.Type.DOUBLE);
+        typeMapInitial.put(Types.NUMERIC, SqlStatement.Type.DOUBLE);
+        typeMapInitial.put(Types.DECIMAL, SqlStatement.Type.DOUBLE);
+
+
+        typeMapInitial.put(Types.BIGINT, SqlStatement.Type.LONG);
+
+        typeMapInitial.put(Types.DATE, SqlStatement.Type.DATE);
+
+        typeMapInitial.put(Types.TIMESTAMP, SqlStatement.Type.TIMESTAMP);
+
+
+        typeMapInitial.put(Types.CHAR, SqlStatement.Type.STRING);
+        typeMapInitial.put(Types.VARCHAR, SqlStatement.Type.STRING);
+        typeMapInitial.put(Types.LONGVARCHAR, SqlStatement.Type.STRING);
+        typeMapInitial.put(Types.NVARCHAR, SqlStatement.Type.STRING);
+        typeMapInitial.put(Types.LONGNVARCHAR, SqlStatement.Type.STRING);
+        TYPE_MAP = Collections.unmodifiableMap(typeMapInitial);
+    }
+
     private static SqlStatement.Type getSqlType(int type) {
-        SqlStatement.Type sqlType = KylinDialect.KYLIN_TYPE_MAP.get(type);
+        SqlStatement.Type sqlType = TYPE_MAP.get(type);
         return sqlType != null ? sqlType : SqlStatement.Type.OBJECT;
     }
 
@@ -510,10 +541,7 @@ public class JdbcSchema {
              * @param dialect
              */
             public SqlStatement.Type getSqlType(Dialect dialect) {
-                if (dialect instanceof KylinDialect) {
-                    return JdbcSchema.getSqlType(getType());
-                }
-                return null;
+                return JdbcSchema.getSqlType(getType());
             }
 
             /**

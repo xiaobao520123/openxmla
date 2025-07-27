@@ -21,22 +21,6 @@ public class SQLiteDialect extends JdbcDialectImpl {
     public SQLiteDialect(Connection connection) throws SQLException {
         super(connection);
     }
-
-    protected void quoteDateLiteral(
-        StringBuilder buf,
-        String value,
-        Date date)
-    {
-        throw new RuntimeException("Not implemented");
-    }
-
-    public String generateInline(
-        List<String> columnNames,
-        List<String> columnTypes,
-        List<String[]> valueList)
-    {
-        throw new RuntimeException("Not implemented");
-    }
 }
 
 // End SQLiteDialect.java
