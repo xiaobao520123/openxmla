@@ -1,7 +1,5 @@
 #!/bin/bash
 
-source ~/.jdk1.8
-
 SCRIPT_DIR=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 WORK_DIR=$SCRIPT_DIR/..
 WORK_DIR=$(realpath "$WORK_DIR")
