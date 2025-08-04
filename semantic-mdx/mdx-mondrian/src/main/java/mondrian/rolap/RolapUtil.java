@@ -14,7 +14,6 @@ package mondrian.rolap;
 
 import io.kylin.mdx.insight.common.SemanticConfig;
 import io.kylin.mdx.insight.core.support.MdxQueryMetrics;
-import io.kylin.mdx.insight.core.sync.DimensionCardinality;
 import io.kylin.mdx.rolap.cache.CacheManager;
 import io.kylin.mdx.rolap.cache.HierarchyCache;
 import io.kylin.mdx.rolap.cache.HierarchyMemberTree;
@@ -311,19 +310,8 @@ public class RolapUtil {
     }
 
     public static OptionalLong getCardinalityFromMetaData(RolapCubeLevel level) {
-        XmlaRequestContext context = XmlaRequestContext.getContext();
-        Map<String, Long> cardinalityMap =
-                DimensionCardinality.getCardinalityMap(context.currentProject, context.currentCatalog);
-
-        RolapSchema.PhysRelation keyRelation = level.getDimension().getKeyTable();
-        if (!(keyRelation instanceof RolapSchema.PhysTable)) {
-            return OptionalLong.empty();
-        }
-        String key = String.format("[%s].%s",
-                ((RolapSchema.PhysTable)keyRelation).getSchemaName(),
-                level.getAttribute().getUniqueName());
-        Long result = cardinalityMap.get(key);
-        return result == null ? OptionalLong.empty() : OptionalLong.of(result);
+        // TODO: Add support for cardinality from metadata based on the level's hierarchy
+        return OptionalLong.empty();
     }
 
     static RolapMember lookupMember(

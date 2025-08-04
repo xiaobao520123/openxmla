@@ -30,7 +30,6 @@ import io.kylin.mdx.insight.core.manager.ProjectManager;
 import io.kylin.mdx.insight.core.sync.*;
 import io.kylin.mdx.insight.core.service.*;
 import io.kylin.mdx.insight.core.sync.MetaSyncScheduleTask;
-import io.kylin.mdx.insight.engine.manager.SyncManager;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,9 +69,6 @@ public class InitServiceImpl implements InitService {
     private ProjectManager projectManager;
 
     @Autowired
-    private DatasetService datasetService;
-
-    @Autowired
     private UserService userService;
 
     @Autowired
@@ -82,16 +78,7 @@ public class InitServiceImpl implements InitService {
     private SqlQueryService sqlQueryService;
 
     @Autowired
-    private MetadataService metadataService;
-
-    @Autowired
-    private ModelService modelService;
-
-    @Autowired
     private MetaSyncService metaSyncService;
-
-    @Autowired
-    SyncManager syncManager;
 
     @Override
     public boolean sync() throws SemanticException {
@@ -185,26 +172,16 @@ public class InitServiceImpl implements InitService {
 
     private void loadAllProjectModelsRelateDataset() throws SemanticException {
         long start = System.currentTimeMillis();
-        try {
-            List<String> projectNames = datasetService.getProjectsRelatedDataset();
-            log.info("Models init process started, projects:{}", JSON.toJSONString(projectNames));
-            for (String projectName : projectNames) {
-                modelService.loadGenericModels(projectName);
-            }
-        } catch (Throwable e) {
-            // 项目在 KYLIN 中不存在或发生其他异常，不影响同步线程启动
-            log.error("loadGenericModels catch exception:", e);
-        }
         log.info("Models have loaded successfully, elapsed time:{}", (System.currentTimeMillis() - start));
     }
 
     private void startMetaMonitor() {
         if (SEMANTIC_CONFIG.isDatasetVerifyEnable()) {
-            metaSyncService.addObserver(syncManager);
-            MetaSyncScheduleTask metaSyncScheduleTask = new MetaSyncScheduleTask(metaSyncService, metadataService, metaStore);
+//            metaSyncService.addObserver(syncManager);
+            MetaSyncScheduleTask metaSyncScheduleTask = new MetaSyncScheduleTask(metaSyncService, metaStore);
             metaSyncScheduleTask.start();
         }
-        syncManager.start();
+//        syncManager.start();
     }
 
 }

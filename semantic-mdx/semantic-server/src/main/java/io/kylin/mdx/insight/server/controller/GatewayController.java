@@ -19,7 +19,6 @@
 
 package io.kylin.mdx.insight.server.controller;
 
-import io.kylin.mdx.insight.engine.manager.LicenseManagerImpl;
 import io.kylin.mdx.insight.core.support.UserOperResult;
 import io.kylin.mdx.core.MdxException;
 import io.kylin.mdx.web.support.MdxAuthenticator;
@@ -37,18 +36,16 @@ import java.util.Map;
 @RestController
 public class GatewayController {
 
-    private final LicenseManagerImpl licenseManagerImpl;
-
     @Autowired
-    public GatewayController(LicenseManagerImpl licenseManagerImpl) {
-        this.licenseManagerImpl = licenseManagerImpl;
+    public GatewayController() {
+
     }
 
     @GetMapping("version")
     @ResponseBody
     public Map<String, String> getVersion() {
         Map<String, String> serverProperties = new HashMap<>(2);
-        serverProperties.put("version", licenseManagerImpl.getKiVersion());
+        serverProperties.put("version", "1.0");
         serverProperties.put("timeout", MondrianProperties.instance().QueryTimeout.stringValue());
         return serverProperties;
     }

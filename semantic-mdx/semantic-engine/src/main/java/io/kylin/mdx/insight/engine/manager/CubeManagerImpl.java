@@ -22,14 +22,11 @@ package io.kylin.mdx.insight.engine.manager;
 import com.google.common.collect.Sets;
 import io.kylin.mdx.insight.core.manager.CubeManager;
 import io.kylin.mdx.insight.core.meta.SemanticAdapter;
-import io.kylin.mdx.insight.core.model.generic.KylinGenericModel;
-import io.kylin.mdx.insight.core.service.ModelService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author qi.wu
@@ -37,9 +34,6 @@ import java.util.stream.Collectors;
 @Service
 public class CubeManagerImpl implements CubeManager {
     private SemanticAdapter semanticAdapter = SemanticAdapter.INSTANCE;
-
-    @Autowired
-    private ModelService modelService;
 
 
     @Override
@@ -50,22 +44,6 @@ public class CubeManagerImpl implements CubeManager {
 
     @Override
     public Set<String> getCubeByCache(String project) {
-        List<KylinGenericModel> cachedModels = modelService.getCachedGenericModels(project);
-        Set<String> cacheProjectName = cachedModels.stream().map(KylinGenericModel::getModelName).collect(Collectors.toSet());
-        return cacheProjectName;
+        return new HashSet<>();
     }
-
-    @Override
-    public List<KylinGenericModel> getCubeModelByCache(String project) {
-        List<KylinGenericModel> cubeModelsFromCache = modelService.getCachedGenericModels(project);
-        return cubeModelsFromCache;
-    }
-
-    @Override
-    public List<KylinGenericModel> getCubeModelByKylin(String project) {
-        List<KylinGenericModel> cubeModelsFromKe = semanticAdapter.getNocacheGenericModels(project);
-        return cubeModelsFromKe;
-    }
-
-
 }

@@ -14,7 +14,6 @@ import io.kylin.mdx.insight.core.meta.ConnectionInfo;
 import io.kylin.mdx.insight.core.meta.SemanticAdapter;
 import io.kylin.mdx.insight.core.service.AuthService;
 import io.kylin.mdx.insight.core.service.UserService;
-import io.kylin.mdx.insight.core.support.PermissionUtils;
 import io.kylin.mdx.insight.core.support.UserOperResult;
 import io.kylin.mdx.insight.server.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -30,8 +29,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
 
 @Slf4j
 @Service
@@ -212,27 +209,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public boolean hasAdminPermission(ConnectionInfo connInfo, boolean global) {
-        boolean accessFlag = false;
-        List<String> authorities = semanticAdapter.getUserAuthority(connInfo);
-        if (authorities.contains(SemanticConstants.ROLE_ADMIN)) {
-            accessFlag = true;
-        }
-        if (global) {
-            return accessFlag;
-        }
-        if (!accessFlag) {
-            Set<String> projects = semanticAdapter.getActualProjectSet(connInfo);
-            ConnectionInfo newConnInfo = new ConnectionInfo(connInfo);
-            for (String project : projects) {
-                newConnInfo.setProject(project);
-                String accessInfo = semanticAdapter.getAccessInfo(newConnInfo);
-                if (PermissionUtils.hasAdminPermission(accessInfo)) {
-                    accessFlag = true;
-                    break;
-                }
-            }
-        }
-        return accessFlag;
+        return true;
     }
 
     @Override

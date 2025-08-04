@@ -25,10 +25,8 @@ import io.kylin.mdx.insight.common.SemanticConfig;
 import io.kylin.mdx.insight.common.SemanticConstants;
 import io.kylin.mdx.insight.common.SemanticUserAndPwd;
 import io.kylin.mdx.insight.common.constants.ConfigConstants;
-import io.kylin.mdx.insight.common.http.Response;
 import io.kylin.mdx.insight.common.util.AESWithPBEEncryptor;
 import io.kylin.mdx.insight.common.util.AESWithECBEncryptor;
-import io.kylin.mdx.insight.core.entity.AADInfo;
 import io.kylin.mdx.insight.core.meta.ConnectionInfo;
 import io.kylin.mdx.insight.core.meta.SemanticAdapter;
 import lombok.extern.slf4j.Slf4j;
@@ -90,13 +88,6 @@ public class MdxPropertySourceLoader implements PropertySourceLoader {
             }
             newSources.add(new OriginTrackedMapPropertySource(name, Collections.unmodifiableMap(newProperties), true));
         }
-
-        try {
-            handleAad();
-        } catch (Exception e) {
-            // Nothing to do
-            log.warn("Failed to handle aad", e);
-        }
         return newSources;
     }
 
@@ -112,46 +103,11 @@ public class MdxPropertySourceLoader implements PropertySourceLoader {
         return value;
     }
 
-    private void handleAad() {
-        String username = SemanticUserAndPwd.getUser();
-        String password = SemanticUserAndPwd.getDecodedPassword();
-        if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
-            return;
-        }
-        ConnectionInfo connectionInfo = ConnectionInfo.builder().user(username).password(password).project("").build();
-        Response profileResp = SemanticAdapter.INSTANCE.getProfileInfo(connectionInfo);
-        if (profileResp != null && profileResp.getHttpStatus() == HttpStatus.SC_OK) {
-            handleAadResponse(profileResp.getContent());
-        }
-    }
-
     public void handleAadResponse(String res) {
         JSONObject jsonObject = JSONObject.parseObject(res);
         if (jsonObject != null
                 && SemanticConstants.STATUS_SUC.equals(jsonObject.getString(SemanticConstants.STATUS_KEY))
                 && jsonObject.getJSONObject("data") != null) {
-            AADInfo aadInfo = jsonObject.getJSONObject("data").toJavaObject(AADInfo.class);
-            if (aadInfo != null && AUTH_TYPE.equals(aadInfo.getAuthType())) {
-                addAadProperties(aadInfo);
-            }
-        }
-    }
-
-    public void addAadProperties(AADInfo aadInfo) {
-        System.setProperty(ConfigConstants.IS_ENABLE_AAD, "true");
-        System.setProperty(ConfigConstants.TENANT_ID, aadInfo.getTenantId());
-        System.setProperty(ConfigConstants.CLIENT_ID, aadInfo.getClientId());
-        AESWithPBEEncryptor encryptor = new AESWithPBEEncryptor();
-        String clientSecret = encryptor.decrypt(aadInfo.getClientSecret());
-        System.setProperty(ConfigConstants.CLIENT_SECRET, clientSecret);
-        log.info("Auth type is: {}", AUTH_TYPE);
-        System.setProperty(REMOTE_IP_HEADER, "X-FORWARDED-FOR");
-        System.setProperty(PROTOCOL_HEADER, "X-Forwarded-Proto");
-        System.setProperty(USE_FORWARD_HEADERS, "true");
-
-        if (StringUtils.isNotBlank(semanticConfig.getAADRedirectUriTemplate())) {
-            System.setProperty(ConfigConstants.REDIRECT_URI_TEMPLATE,
-                    semanticConfig.getAADRedirectUriTemplate());
         }
     }
 

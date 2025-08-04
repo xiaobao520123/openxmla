@@ -20,7 +20,6 @@
 package io.kylin.mdx.insight.core.manager;
 
 import io.kylin.mdx.insight.common.SemanticException;
-import io.kylin.mdx.insight.core.model.generic.KylinGenericModel;
 
 import java.util.List;
 import java.util.Set;
@@ -47,22 +46,4 @@ public interface CubeManager {
      * @throws SemanticException
      */
     Set<String> getCubeByCache(String project) throws SemanticException;
-
-    /**
-     * get cube models from cache, cache is from memory now
-     *
-     * @param project mdx project name
-     * @return List<KylinGenericModel>
-     * @throws SemanticException
-     */
-    List<KylinGenericModel> getCubeModelByCache(String project) throws SemanticException;
-
-    /**
-     * get cube models from Kylin, only KYLIN now
-     *
-     * @param project mdx project name
-     * @return List<KylinGenericModel>
-     * @throws SemanticException
-     */
-    List<KylinGenericModel> getCubeModelByKylin(String project) throws SemanticException;
 }

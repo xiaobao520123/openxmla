@@ -28,7 +28,6 @@ import io.kylin.mdx.insight.common.util.UUIDUtils;
 import io.kylin.mdx.insight.core.entity.MdxQuery;
 import io.kylin.mdx.insight.core.entity.SqlQuery;
 import io.kylin.mdx.insight.core.support.MdxQueryMetrics;
-import io.kylin.mdx.insight.core.support.SemanticFacade;
 import io.kylin.mdx.insight.core.sync.MetaStore;
 import io.kylin.mdx.insight.core.sync.QueryLogPersistence;
 import io.kylin.mdx.insight.core.sync.UserSyncHolder;
@@ -195,7 +194,7 @@ public class MdxXmlaServlet extends DefaultXmlaServlet {
 
         boolean forceRefresh = MetaStore.getInstance().isForceRefreshSchema(project, mdxContext.getQueryUser());
         if (forceRefresh) {
-            SemanticFacade.INSTANCE.clearProjectCache(project, mdxContext.getQueryUser());
+//            SemanticFacade.INSTANCE.clearProjectCache(project, mdxContext.getQueryUser());
         }
 
         if (MdxConfig.getInstance().isDisableRefreshSchema()) {

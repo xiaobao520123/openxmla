@@ -36,10 +36,6 @@ public class UserSyncHolder {
     private UserSyncHolder() {
     }
 
-    public synchronized void putEvent(DatasetEventObject.DatasetChangedSource event) {
-        userProjects.values().forEach(x -> x.add(event.getProjectName()));
-    }
-
     public synchronized Set<String> getChangedProjectsByUser(String username) {
         Set<String> projects = userProjects.computeIfAbsent(username, k -> new HashSet<>());
         Set<String> copiedSet = new HashSet<>(projects.size());

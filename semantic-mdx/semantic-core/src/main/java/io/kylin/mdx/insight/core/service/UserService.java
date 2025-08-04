@@ -20,13 +20,9 @@
 package io.kylin.mdx.insight.core.service;
 
 import io.kylin.mdx.insight.common.SemanticException;
-import io.kylin.mdx.insight.core.entity.GroupInfo;
-import io.kylin.mdx.insight.core.entity.SyncResult;
 import io.kylin.mdx.insight.core.entity.UserInfo;
 import io.kylin.mdx.insight.core.meta.ConnectionInfo;
 import io.kylin.mdx.insight.core.meta.SemanticAdapter;
-import io.kylin.mdx.insight.core.model.generic.KylinUserInfo;
-import io.kylin.mdx.insight.core.support.KILicenseInfo;
 import io.kylin.mdx.insight.core.support.UserOperResult;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -110,12 +106,6 @@ public interface UserService {
 
     /**
      *
-     * @return
-     */
-    KILicenseInfo getKiLicenseInfo();
-
-    /**
-     *
      * @param pageNum
      * @param pageSize
      * @return
@@ -139,45 +129,10 @@ public interface UserService {
 
     /**
      *
-     * @param project
-     * @param pageNum
-     * @param pageSize
-     * @return
-     */
-    List<GroupInfo> getAllGroupByProject(String project, Integer pageNum, Integer pageSize);
-
-    /**
-     *
-     * @param pageNum
-     * @param pageSize
-     * @return
-     */
-    List<GroupInfo> getAllGroup(Integer pageNum, Integer pageSize);
-
-    /**
-     *
      * @param userName
      * @param password
      */
     void updateConfUsr(String userName, String password);
-
-    /**
-     *
-     * @return
-     */
-    List<KylinUserInfo> getUsersByKylin();
-
-    /**
-     *
-     * @param users
-     */
-    void saveUsersToCache(List<KylinUserInfo> users);
-
-    /**
-     *
-     * @return
-     */
-    Set<String> getUsersNameByKylin();
 
     /**
      *

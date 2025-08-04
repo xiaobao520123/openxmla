@@ -28,19 +28,14 @@ import io.kylin.mdx.insight.common.http.Response;
 import io.kylin.mdx.insight.common.util.AESWithECBEncryptor;
 import io.kylin.mdx.insight.common.util.Utils;
 import io.kylin.mdx.insight.core.dao.UserInfoMapper;
-import io.kylin.mdx.insight.core.entity.GroupInfo;
 import io.kylin.mdx.insight.core.entity.KylinPermission;
 import io.kylin.mdx.insight.core.entity.SyncResult;
 import io.kylin.mdx.insight.core.entity.UserInfo;
 import io.kylin.mdx.insight.core.service.UserService;
 import io.kylin.mdx.insight.core.support.SpringHolder;
 import io.kylin.mdx.insight.core.manager.ProjectManager;
-import io.kylin.mdx.insight.core.model.generic.KylinUserInfo;
-import io.kylin.mdx.insight.engine.manager.LicenseManagerImpl;
 import io.kylin.mdx.insight.core.meta.ConnectionInfo;
 import io.kylin.mdx.insight.core.meta.SemanticAdapter;
-import io.kylin.mdx.insight.core.support.KILicenseInfo;
-import io.kylin.mdx.insight.core.support.PermissionUtils;
 import io.kylin.mdx.insight.core.support.UserOperResult;
 import io.kylin.mdx.insight.core.sync.MetaStore;
 import io.kylin.mdx.ErrorCode;
@@ -62,8 +57,6 @@ public class UserServiceImpl implements UserService {
 
     private final UserInfoMapper userInfoMapper;
 
-    private final LicenseManagerImpl licenseManagerImpl;
-
     private final ProjectManager projectManager;
 
     @Override
@@ -78,10 +71,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     public UserServiceImpl(UserInfoMapper userInfoMapper,
-                           LicenseManagerImpl licenseManagerImpl,
                            ProjectManager projectManager) {
         this.userInfoMapper = userInfoMapper;
-        this.licenseManagerImpl = licenseManagerImpl;
         this.projectManager = projectManager;
     }
 
@@ -92,28 +83,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserOperResult loginForMDX(String user, String password, String project, String delegate) throws SemanticException {
         UserOperResult result = login(Utils.buildBasicAuth(user, password));
-        //TODO: LOGIN_NOT_AUTHORIZED should be also notified
-        if (result != UserOperResult.LOGIN_SUCCESS) {
-            return result;
-        }
-        if (StringUtils.isBlank(project)) {
-            return result;
-        }
-        ConnectionInfo connectionInfo = ConnectionInfo.builder().user(user).password(password).project(project).build();
-        String accessInfo = SemanticAdapter.INSTANCE.getAccessInfo(connectionInfo);
-        if (delegate != null) {
-            if (!PermissionUtils.hasAdminPermission(accessInfo)) {
-                throw new SemanticException(ErrorCode.EXECUTE_NOT_ENOUGH_PERMISSION);
-            }
-            UserInfo userInfo = userInfoMapper.selectByUserName(delegate.toUpperCase());
-            if (userInfo == null) {
-                throw new SemanticException(ErrorCode.EXECUTE_PARAMETER_NOT_FOUND);
-            }
-            // TODO: Check the delegated user has project access permission
-        }
-        if (!PermissionUtils.hasQueryPermission(accessInfo)) {
-            result = UserOperResult.USER_NO_ACCESS_PROJECT;
-        }
         return result;
     }
 
@@ -166,27 +135,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public boolean hasAdminPermission(ConnectionInfo connInfo, boolean global) {
-        boolean accessFlag = false;
-        List<String> authorities = semanticAdapter.getUserAuthority(connInfo);
-        if (authorities.contains(SemanticConstants.ROLE_ADMIN)) {
-            accessFlag = true;
-        }
-        if (global) {
-            return accessFlag;
-        }
-        if (!accessFlag) {
-            Set<String> projects = semanticAdapter.getActualProjectSet(connInfo);
-            ConnectionInfo newConnInfo = new ConnectionInfo(connInfo);
-            for (String project : projects) {
-                newConnInfo.setProject(project);
-                String accessInfo = semanticAdapter.getAccessInfo(newConnInfo);
-                if (PermissionUtils.hasAdminPermission(accessInfo)) {
-                    accessFlag = true;
-                    break;
-                }
-            }
-        }
-        return accessFlag;
+        return true;
     }
 
     private UserOperResult handleSemanticException(SemanticException semanticException) {
@@ -214,19 +163,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public UserOperResult changeUserLicense(String username, Integer licenseAuth) {
-        LicenseAuth licenseAuthType = LicenseAuth.of(licenseAuth);
-        if (licenseAuthType == LicenseAuth.AUTHORIZED) {
-            int curLicenseNum = userInfoMapper.selectLicenseNumWithLock();
-            if (curLicenseNum < licenseManagerImpl.getUserLimit()) {
-                userInfoMapper.updateLicenseAuthByUsername(username.toUpperCase(), LicenseAuth.AUTHORIZED.ordinal());
-                return UserOperResult.USER_UPDATE_AUTH_SUCCESS;
-            } else {
-                return UserOperResult.USER_LIMIT_EXCEED;
-            }
-        } else {
-            userInfoMapper.updateLicenseAuthByUsername(username.toUpperCase(), LicenseAuth.NOT_AUTHORIZED.ordinal());
-            return UserOperResult.USER_UPDATE_AUTH_SUCCESS;
-        }
+        userInfoMapper.updateLicenseAuthByUsername(username.toUpperCase(), LicenseAuth.AUTHORIZED.ordinal());
+        return UserOperResult.USER_UPDATE_AUTH_SUCCESS;
     }
 
     @Override
@@ -237,20 +175,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserInfo selectOne(String username) {
         return userInfoMapper.selectByUserName(username.toUpperCase());
-    }
-
-    @Override
-    public KILicenseInfo getKiLicenseInfo() {
-        KILicenseInfo kiLicenseInfo = new KILicenseInfo();
-        kiLicenseInfo.setUserLimit(licenseManagerImpl.getUserLimit());
-        kiLicenseInfo.setKiType(licenseManagerImpl.getKiType());
-        kiLicenseInfo.setKiVersion(licenseManagerImpl.getKiVersion());
-        kiLicenseInfo.setCommitId(licenseManagerImpl.getCommitId());
-        kiLicenseInfo.setLiveDateRange(licenseManagerImpl.getLiveDateRange());
-        kiLicenseInfo.setUserAuthCount(userInfoMapper.selectLicenseNum());
-        kiLicenseInfo.setAnalyticTypes(licenseManagerImpl.getAnalyticTypes());
-
-        return kiLicenseInfo;
     }
 
     @Override
@@ -279,23 +203,6 @@ public class UserServiceImpl implements UserService {
         return userInfoMapper.updateConfUsr(userInfo);
     }
 
-
-    @Override
-    public List<KylinUserInfo> getUsersByKylin() {
-        return semanticAdapter.getNoCacheUsers();
-    }
-
-    @Override
-    public void saveUsersToCache(List<KylinUserInfo> users) {
-        metaStore.syncUserAndGroup(users);
-    }
-
-    @Override
-    public Set<String> getUsersNameByKylin() {
-        Set<String> users = getUsersByKylin().stream()
-                .map(userInfo -> userInfo.getUsername().toUpperCase()).collect(Collectors.toSet());
-        return users;
-    }
 
     @Override
     public Set<String> getUsersNameByDatabase() {
@@ -371,35 +278,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<GroupInfo> getAllGroupByProject(String project, Integer pageNum, Integer pageSize) {
-        List<String> groups = getSemanticAdapter().getGroupsByProject(project);
-        return pageIndex(groups, pageNum, pageSize);
-    }
-
-    @Override
-    public List<GroupInfo> getAllGroup(Integer pageNum, Integer pageSize) {
-        MetaStore metaStore = MetaStore.getInstance();
-        List<String> groups = metaStore.getAllGroupName();
-        return pageIndex(groups, pageNum, pageSize);
-    }
-
-    @Override
     public int insertSelective(UserInfo record) {
         return userInfoMapper.insertSelective(record);
-    }
-
-    private List<GroupInfo> pageIndex(List<String> groups, int pageNum, int pageSize) {
-        int start = Math.min(pageNum * pageSize, groups.size());
-        int end = Math.min(start + pageSize, groups.size());
-        List<String> subList = groups.subList(start, end);
-        Page<GroupInfo> page = new Page<>();
-        page.setTotal(groups.size());
-        page.setPageNum(pageNum + 1);
-        page.setPageSize(subList.size());
-        for (int i = 0; i < subList.size(); i++) {
-            page.add(new GroupInfo(start + i, subList.get(i)));
-        }
-        return page;
     }
 
     public enum LicenseAuth {

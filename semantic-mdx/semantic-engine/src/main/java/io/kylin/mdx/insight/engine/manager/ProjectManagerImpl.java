@@ -28,13 +28,10 @@ import io.kylin.mdx.insight.common.SemanticUserAndPwd;
 import io.kylin.mdx.insight.common.async.AsyncService;
 import io.kylin.mdx.insight.common.async.BatchTaskExecutor;
 import io.kylin.mdx.insight.common.util.Utils;
-import io.kylin.mdx.insight.core.entity.RoleType;
 import io.kylin.mdx.insight.core.manager.AsyncManager;
 import io.kylin.mdx.insight.core.meta.ConnectionInfo;
 import io.kylin.mdx.insight.core.meta.SemanticAdapter;
 import io.kylin.mdx.insight.core.manager.ProjectManager;
-import io.kylin.mdx.insight.core.model.acl.AclProjectModel;
-import io.kylin.mdx.insight.core.service.ModelService;
 import io.kylin.mdx.insight.core.sync.MetaStore;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,9 +43,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @Service
 public class ProjectManagerImpl implements ProjectManager {
-
-    @Autowired
-    private ModelService modelService;
 
     private volatile static Set<String> cachedProjectSet = Collections.emptySet();
 
@@ -134,18 +128,8 @@ public class ProjectManagerImpl implements ProjectManager {
     }
 
     @Override
-    public void doProjectAcl(String realUser, String project) {
-        AclProjectModel oldModel = metaStore.getAclProjectModel(realUser, project);
-        List<String> tables = new ArrayList<>(oldModel.getModels().keySet());
-        AclProjectModel newModel = semanticAdapter.getAclModel(project, RoleType.USER.getType(), realUser, tables);
-        if (!newModel.isCompatible(oldModel)) {
-            metaStore.addForceRefreshSchema(project, realUser);
-        }
-    }
-
-    @Override
     public List<String> getProjectNamesByCache() {
-        return modelService.getCachedProjectNames();
+        return new LinkedList<>();
     }
 
 }

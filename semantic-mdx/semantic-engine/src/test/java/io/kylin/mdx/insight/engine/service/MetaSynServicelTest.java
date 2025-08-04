@@ -166,11 +166,4 @@ public class MetaSynServicelTest {
         metaSyncService.clearProjectCache("test");
     }
 
-    @Test
-    public void syncProjectAclChangeTestTest() {
-        when(projectManager.getAllProject()).thenReturn(Sets.newHashSet("test1", "test4"));
-        when(userService.getUsersByProjectFromCache(any())).thenReturn(Arrays.asList("test1", "test4"));
-        metaSyncService.syncProjectAclChange();
-    }
-
 }

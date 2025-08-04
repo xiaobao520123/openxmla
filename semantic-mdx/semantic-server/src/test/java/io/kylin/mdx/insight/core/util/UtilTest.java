@@ -21,14 +21,7 @@ package io.kylin.mdx.insight.core.util;
 
 import io.kylin.mdx.insight.base.BaseEnvSetting;
 import io.kylin.mdx.insight.common.SemanticConfig;
-import io.kylin.mdx.insight.common.http.HttpUtil;
-import io.kylin.mdx.insight.common.http.Response;
 import io.kylin.mdx.insight.common.util.Utils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpStatus;
-import org.apache.http.HttpVersion;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.message.BasicStatusLine;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
