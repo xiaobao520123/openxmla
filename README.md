@@ -13,14 +13,14 @@ scripts/build.sh
 # Build docker image
 scripts/dockerbuild.sh
 # Start docker container
-docker run -itd --name openxmla -p 7080:7080 openxmla:latest
+docker run --rm -it --name openxmla -p 6068:6068 openxmla:latest
 ```
 
 ## Connect to OpenXMLA
 
 1. Open Microsoft Excel. Create a new workbook.
 2. Go to "Data" -> "Get Data" -> "From Other Sources" -> "From Analysis Services".
-3. Enter the server name as `http://localhost:7080/mdx/xmla/SalesWarehouse`. 
+3. Enter the server name as `http://localhost:6068/mdx/xmla/SalesWarehouse`. 
 4. Enter any username and password (e.g., `admin`/`admin`).
 5. Click "Next" to connect.
 
@@ -40,7 +40,7 @@ docker run -itd --name openxmla -p 7080:7080 openxmla:latest
   - [ ] Filter pushdown
   - [ ] Paging
 
-4. Maintenance
+4. Monitoring/Management
   - [x] Admin portal
   - [ ] Schema management
   - [ ] User management

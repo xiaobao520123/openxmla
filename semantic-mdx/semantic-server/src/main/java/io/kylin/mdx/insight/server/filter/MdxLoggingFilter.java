@@ -77,9 +77,6 @@ public class MdxLoggingFilter implements Filter {
      */
     private boolean isLogging(XmlaRequestContext context, HttpRequestWrapper request) {
         boolean logging = request.isDebugMode();
-//        if (!logging) {
-//
-//        }
         context.debugMode = logging;
         return logging;
     }

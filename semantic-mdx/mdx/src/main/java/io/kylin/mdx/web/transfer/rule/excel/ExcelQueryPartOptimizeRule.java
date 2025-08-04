@@ -281,7 +281,7 @@ public class ExcelQueryPartOptimizeRule extends MdxQueryPartOptimizeRule {
     private String convertAllEleMemberToMembers(String allEleMember) {
         Matcher memberMatcher = allElePatternV2.matcher(allEleMember);
         if (memberMatcher.find()) {
-            return memberMatcher.replaceAll("$1.$1.Members");
+            return memberMatcher.replaceAll("$1.Members");
         }
         return allEleMember;
     }

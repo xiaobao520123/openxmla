@@ -26,7 +26,6 @@ import io.kylin.mdx.insight.common.util.ShellUtils;
 import io.kylin.mdx.insight.common.util.Utils;
 import io.kylin.mdx.insight.core.dao.MdxInfoMapper;
 import io.kylin.mdx.insight.core.entity.*;
-import io.kylin.mdx.insight.core.manager.LicenseManager;
 import io.kylin.mdx.insight.core.service.DiagnosisService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -69,8 +68,6 @@ public class PackageThread extends Thread {
 
     private String semanticMdxPath;
 
-    private LicenseManager licenseManager;
-
     private Map<String, String> mapDatasetName2Json;
 
     public String packageName;
@@ -94,14 +91,13 @@ public class PackageThread extends Thread {
     };
 
     public PackageThread(Long startTimeStamp, Long endTimeStamp, String semanticMDXPath, String queryTime, String ip,
-                         String port, LicenseManager licenseManager, Map<String, String> mapDatasetName2Json, DiagnosisContext intermediaDirs, MdxInfoMapper mdxInfoMapper) {
+                         String port, Map<String, String> mapDatasetName2Json, DiagnosisContext intermediaDirs, MdxInfoMapper mdxInfoMapper) {
         this.startAt = conditionDateFormat.format(new Date(startTimeStamp * 1000));
         this.endAt = conditionDateFormat.format(new Date(endTimeStamp * 1000));
         this.semanticMdxPath = semanticMDXPath;
         this.queryTime = queryTime;
         this.ip = ip;
         this.port = port;
-        this.licenseManager = licenseManager;
         this.mapDatasetName2Json = mapDatasetName2Json;
         semanticMDXPath = semanticMDXPath + File.separator + Paths.SHELL_SCRIPT_PATH;
         if (!startAt.isEmpty()) {
@@ -230,21 +226,13 @@ public class PackageThread extends Thread {
         }
         buf.append("mdx.home").append(": ").append(mdxHome).append(nl);
 
-        String mdxVersion = licenseManager.getKiVersion();
-        if (mdxVersion == null || "".equals(mdxVersion)) {
-            mdxVersion = DiagnosisService.UNKNOWN;
-        }
-
+        String mdxVersion = DiagnosisService.UNKNOWN;
         buf.append("mdx.version").append(": ").append(mdxVersion);
         if (!isEndsWithNl(mdxVersion)) {
             buf.append(nl);
         }
 
-        String commit = licenseManager.getCommitId();
-        if (commit == null || "".equals(commit)) {
-            commit = DiagnosisService.UNKNOWN;
-        }
-
+        String commit = DiagnosisService.UNKNOWN;
         buf.append("commit").append(": ").append(commit);
         if (!isEndsWithNl(commit)) {
             buf.append(nl);

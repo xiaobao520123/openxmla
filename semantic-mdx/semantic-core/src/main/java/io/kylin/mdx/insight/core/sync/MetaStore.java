@@ -19,14 +19,6 @@
 
 package io.kylin.mdx.insight.core.sync;
 
-import io.kylin.mdx.insight.core.entity.RoleType;
-import io.kylin.mdx.insight.core.model.acl.AclProjectModel;
-import io.kylin.mdx.insight.core.model.acl.AclTableModel;
-import io.kylin.mdx.insight.core.model.generic.KylinGenericModel;
-import io.kylin.mdx.insight.core.model.generic.KylinUserInfo;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -83,28 +75,17 @@ public class MetaStore {
      */
     private final Map<String, Set<String>> projectLoadingMap = new HashMap<>();
 
-    /**
-     * (user,project) -> project acl
-     */
-    private final Map<AclKey, AclProjectModel> projectModelMap = new HashMap<>();
-
     private final Map<String, Set<String>> segmentsCache = new ConcurrentHashMap<>();
 
     private static final AtomicLong lastUpdateTime = new AtomicLong();
 
     private final Set<String> notFoundProjects = new HashSet<>();
 
-    private final Map<String, List<KylinGenericModel>> project2Models = new ConcurrentHashMap<>();
-
     private MetaStore() {
     }
 
     public Set<String> getNotFoundProjects() {
         return notFoundProjects;
-    }
-
-    public Map<String, List<KylinGenericModel>> getProject2Models() {
-        return project2Models;
     }
 
     public AtomicLong getLastUpdateTime() {
@@ -162,27 +143,6 @@ public class MetaStore {
         }
     }
 
-    public void syncUserAndGroup(List<KylinUserInfo> userInfoList) {
-        Lock lock = userLock.writeLock();
-        lock.lock();
-        try {
-            userToGroupsMap.clear();
-            groupToUsersMap.clear();
-            originalNameMap.clear();
-            for (KylinUserInfo userInfo : userInfoList) {
-                String user = userInfo.getUsername();
-                originalNameMap.put(user.toUpperCase(), user);
-                for (KylinUserInfo.AuthorityInfo authority : userInfo.getAuthorities()) {
-                    String group = authority.getAuthority();
-                    userToGroupsMap.computeIfAbsent(user.toUpperCase(), k -> new ArrayList<>()).add(group);
-                    groupToUsersMap.computeIfAbsent(group, k -> new ArrayList<>()).add(user.toUpperCase());
-                }
-            }
-        } finally {
-            lock.unlock();
-        }
-    }
-
     public void addForceRefreshSchema(String project, String realUser) {
         synchronized (projectRefreshMap) {
             projectRefreshMap.computeIfAbsent(project, k -> new HashSet<>()).add(realUser);
@@ -209,35 +169,6 @@ public class MetaStore {
         }
     }
 
-    public AclProjectModel getAclProjectModel(String user, String project) {
-        projectLock.lock();
-        try {
-            return projectModelMap.get(new AclKey(user, project));
-        } finally {
-            projectLock.unlock();
-        }
-    }
-
-    public void recordAclProjectModel(AclProjectModel newModel) {
-        if (!Objects.equals(newModel.getType(), RoleType.USER.getType())) {
-            return;
-        }
-        projectLock.lock();
-        try {
-            projectLoadingMap.computeIfAbsent(newModel.getProject(), k -> new HashSet<>())
-                    .add(newModel.getName());
-            AclKey aclKey = new AclKey(newModel.getName(), newModel.getProject());
-            AclProjectModel aclModel = projectModelMap.computeIfAbsent(aclKey,
-                    k -> new AclProjectModel(newModel.getType(), newModel.getName(), newModel.getProject()));
-            for (AclTableModel newTableModel : newModel.getModels().values()) {
-                aclModel.setModel(newTableModel.getTable(), newTableModel);
-            }
-            projectModelMap.put(aclKey, aclModel);
-        } finally {
-            projectLock.unlock();
-        }
-    }
-
     public Set<String> getSegmentCacheByProject(String project) {
         if (project == null) {
             return Collections.emptySet();
@@ -259,24 +190,6 @@ public class MetaStore {
         } finally {
             lock.unlock();
         }
-    }
-
-    public void setProject2Models(String project, List<KylinGenericModel> genericModels) {
-        project2Models.put(project, genericModels);
-    }
-
-    public void clearProjectModels() {
-        project2Models.clear();
-    }
-
-    @Data
-    @AllArgsConstructor
-    private static class AclKey {
-
-        private String user;
-
-        private String project;
-
     }
 
 }

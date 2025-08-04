@@ -82,10 +82,8 @@ public class UrlMappingFilter implements Filter {
             chain.doFilter(request, response);
         } else {
             authenticate(response);
-            if (!CONFIG.isEnableAAD() || StringUtils.isNotBlank(authService.getCurrentUser())) {
+            if (StringUtils.isNotBlank(authService.getCurrentUser())) {
                 replaceBaseUrl(httpRequest, response);
-            } else {
-                ((HttpServletResponse) response).sendRedirect(CONFIG.getAADLoginUrl());
             }
         }
     }

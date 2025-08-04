@@ -20,9 +20,6 @@
 package io.kylin.mdx.insight.core.meta;
 
 import io.kylin.mdx.insight.common.http.Response;
-import io.kylin.mdx.insight.core.model.generic.KylinGenericModel;
-import io.kylin.mdx.insight.core.model.generic.KylinUserInfo;
-import io.kylin.mdx.insight.core.model.acl.AclProjectModel;
 
 import java.util.*;
 
@@ -45,16 +42,6 @@ public class SemanticAdapter {
         return cubeNames;
     }
 
-    public List<KylinUserInfo> getNoCacheUsers() {
-        List<KylinUserInfo> users = new LinkedList<>();
-        users.add(new KylinUserInfo(this.USER, null));
-        return users;
-    }
-
-    public List<String> getNoCacheGroups() {
-        return Collections.emptyList();
-    }
-
     public List<String> getUserAuthority(ConnectionInfo connInfo) {
         List<String> authorities = new LinkedList<>();
         authorities.add(this.AUTHORITY);
@@ -68,10 +55,6 @@ public class SemanticAdapter {
 
     public Map<String, Long> getDimensionCardinality(String project) {
         return Collections.EMPTY_MAP;
-    }
-
-    public List<KylinGenericModel> getNocacheGenericModels(String project) {
-        return Collections.emptyList();
     }
 
     public Set<String> getActualProjectSet(ConnectionInfo connectionInfo) {
@@ -91,10 +74,6 @@ public class SemanticAdapter {
 
     public String getAccessInfo(ConnectionInfo connectionInfo) {
         return ACCESS_INFO;
-    }
-
-    public AclProjectModel getAclModel(String project, String type, String name, List<String> tables) {
-        return new AclProjectModel(type, name, project);
     }
 
     public List<String> getGroupsByProject(String project) {

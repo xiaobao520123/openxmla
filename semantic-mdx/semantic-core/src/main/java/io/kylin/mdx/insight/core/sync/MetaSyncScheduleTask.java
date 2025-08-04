@@ -23,7 +23,6 @@ import io.kylin.mdx.insight.common.MdxContext;
 import io.kylin.mdx.insight.common.SemanticConfig;
 import io.kylin.mdx.insight.common.util.Utils;
 import io.kylin.mdx.insight.core.service.MetaSyncService;
-import io.kylin.mdx.insight.core.service.MetadataService;
 import io.kylin.mdx.insight.core.support.DefaultThreadFactory;
 import lombok.extern.slf4j.Slf4j;
 
@@ -44,13 +43,10 @@ public class MetaSyncScheduleTask {
 
     private MetaSyncService metaSyncService;
 
-    private MetadataService metadataService;
-
     private MetaStore metaStore;
 
-    public MetaSyncScheduleTask(MetaSyncService metaSyncService, MetadataService metadataService, MetaStore metaStore) {
+    public MetaSyncScheduleTask(MetaSyncService metaSyncService, MetaStore metaStore) {
         this.metaSyncService = metaSyncService;
-        this.metadataService = metadataService;
         this.metaStore = metaStore;
     }
 
@@ -89,19 +85,15 @@ public class MetaSyncScheduleTask {
         private void syncMetadata() {
             metaStore.getLastUpdateTime().set(Utils.currentTimeStamp());
             metaSyncService.syncUser();
-            metaSyncService.syncGroup();
             metaSyncService.syncCube();
             metaSyncService.syncProjects();
-            metaSyncService.syncProjectAclChange();
             if (++count % DATASET_VERIFY_INTERNAL != 0 && !MdxContext.isFirstVerify()) {
                 return;
             }
-            metaSyncService.loadKiLicense();
             if (SEMANTIC_CONFIG.isEnableSyncSegment()) {
                 metaSyncService.syncSegment();
             }
             metaSyncService.syncDataset();
-            metadataService.syncCardinalityInfo();
             MdxContext.setFirstVerify(false);
         }
     }
