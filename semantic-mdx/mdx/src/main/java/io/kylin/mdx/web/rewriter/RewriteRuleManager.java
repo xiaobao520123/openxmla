@@ -22,7 +22,6 @@ package io.kylin.mdx.web.rewriter;
 
 import io.kylin.mdx.web.rewriter.rule.AddCalcMembersRule;
 import io.kylin.mdx.web.rewriter.rule.MstrFilterFlattenRule;
-import io.kylin.mdx.web.rewriter.rule.RemoveSubQueryRule;
 import io.kylin.mdx.web.rewriter.rule.ReplaceFunNameRule;
 import io.kylin.mdx.web.rewriter.rule.SetsInWhereToCalcMemberRule;
 import lombok.Getter;
@@ -38,16 +37,11 @@ public class RewriteRuleManager {
     @Getter
     private final List<RewriteRule> rules = new ArrayList<>();
 
-    public RewriteRuleManager(SimpleValidator mdxValidator) {
+    public RewriteRuleManager() {
         /*
          * 去除函数中的 INCLUDE_CALC_MEMBERS 标签
          */
         rules.add(new AddCalcMembersRule());
-
-        /*
-         * 改写子查询语句为非子查询, 支持更复杂功能
-         */
-        rules.add(new RemoveSubQueryRule(mdxValidator));
 
         /*
          * 将 CrossJoin 改写为 NonEmptyCrossJoin

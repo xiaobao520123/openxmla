@@ -38,7 +38,7 @@ public class MdxRewriterImpl implements MdxRewriter {
 
     private final SimpleValidator mdxValidator = new SimpleValidator();
 
-    private final RewriteRuleManager ruleManager = new RewriteRuleManager(mdxValidator);
+    private final RewriteRuleManager ruleManager = new RewriteRuleManager();
 
     @Override
     public Pair<Boolean, String> rewrite(String mdx) {
