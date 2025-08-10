@@ -166,7 +166,6 @@ public class XmlaRequestContext {
         public String sql;
         public Long runTime;
         private boolean cacheUsed;
-        private String kylinQueryId;
         private int resultRows = -1;
 
         public ExecuteSql(String sql) {
@@ -191,14 +190,6 @@ public class XmlaRequestContext {
 
         public boolean getCacheUsed() {
             return this.cacheUsed;
-        }
-
-        public void setKeQueryId(String kylinQueryId) {
-            this.kylinQueryId = kylinQueryId;
-        }
-
-        public String getKylinQueryId() {
-            return kylinQueryId;
         }
 
         public void setResultRows(int resultRows) {
@@ -260,11 +251,6 @@ public class XmlaRequestContext {
         public void setSqlRunTime(Object sqlExtend, Long runTime) {
             ExecuteSql executeSql = getExecuteSql(sqlExtend);
             executeSql.setRunTime(runTime);
-        }
-
-        public void setKeQueryId(Object sqlExtend, String kylinQueryId) {
-            ExecuteSql executeSql = getExecuteSql(sqlExtend);
-            executeSql.setKeQueryId(kylinQueryId);
         }
 
         public void setResultRows(Object sqlExtend, int resultRows) {
@@ -355,7 +341,6 @@ public class XmlaRequestContext {
                     bufTemp.append("SQL_").append(i).append(" Execution Time: ").append(getTimeStr(executeSql.runTime)).append(ls);
                     bufTemp.append("SQL_").append(i).append(" Cache Used: ").append(executeSql.cacheUsed).append(ls);
                     bufTemp.append("SQL_").append(i).append(" Result Rows: ").append(executeSql.getResultRowsStr()).append(ls);
-                    bufTemp.append("SQL_").append(i).append(" KYLIN Query Id: ").append(executeSql.getKylinQueryId()).append(ls);
                     bufTemp.append(ls);
                     i ++;
                 }
@@ -429,7 +414,6 @@ public class XmlaRequestContext {
                 mapSqlQuery.put("sqlText", executeSql.getSql());
                 mapSqlQuery.put("sqlExecutionTime", executeSql.getRunTime());
                 mapSqlQuery.put("sqlCacheUsed", executeSql.getCacheUsed());
-                mapSqlQuery.put("kylinQueryId", executeSql.getKylinQueryId());
                 mapSqlQuery.put("resultRows", executeSql.getResultRows());
                 if (null == executeSql.getRunTime()) {
                     mapSqlQuery.put("execStatus", false);

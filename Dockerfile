@@ -25,8 +25,8 @@ RUN rm -rf /app/semantic-service.jar
 COPY semantic-mdx/semantic-deploy/target/semantic-service.jar /app/semantic-service.jar
 
 ENV INSIGHT_HOME=/app
-COPY scripts/run.sh /app/run.sh
-RUN chmod +x /app/run.sh
+COPY scripts/startup.sh /app/startup.sh
+RUN chmod +x /app/startup.sh
 COPY scripts/entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 

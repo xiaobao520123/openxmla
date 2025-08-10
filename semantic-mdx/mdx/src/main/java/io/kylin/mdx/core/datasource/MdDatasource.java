@@ -45,7 +45,7 @@ public class MdDatasource {
         sb.append("<DataSources>\n");
         sb.append("\t<DataSource>\n");
         sb.append("\t\t<DataSourceName>").append(this.dataSourceName).append("</DataSourceName>\n");
-        sb.append("\t\t<DataSourceDescription>Kylin xmla datasource, last modified time is ").append(lastModifiedTime).append("</DataSourceDescription>\n");
+        sb.append("\t\t<DataSourceDescription>OpenXMLA datasource, last modified time is ").append(lastModifiedTime).append("</DataSourceDescription>\n");
         sb.append("\t\t<URL>http://lcoalhost:8080/mdx/xmla</URL>\n");
         sb.append("\t\t<DataSourceInfo>").append(this.dataSourceInfo).append("</DataSourceInfo>\n");
         sb.append("\t\t<ProviderName>Mondrian</ProviderName>\n");

@@ -19,7 +19,6 @@
 
 package io.kylin.mdx.insight.common;
 
-import io.kylin.mdx.insight.common.constants.ConfigConstants;
 import io.kylin.mdx.insight.common.util.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
@@ -79,7 +78,7 @@ public class SemanticConfig extends SemanticConfigBase {
     }
 
     public String getJDBC() {
-        return getOptional("insight.mdx.mondrian.jdbc", "jdbc:sqlite:/Users/xiaobao/sqlite_warehouse.data");
+        return getOptional("insight.mdx.mondrian.jdbc", "jdbc:sqlite:/app/data/SalesWarehouse.sqlite.data");
     }
 
     public String getJDBCDriver() {
@@ -87,7 +86,7 @@ public class SemanticConfig extends SemanticConfigBase {
     }
 
     public String getSchemaFilePath() {
-        return getOptional("insight.mdx.mondrian.schema.path", "/Users/xiaobao/Projects/openxmla/build/conf/openxmla.xml");
+        return getOptional("insight.mdx.mondrian.schema.path", "/app/conf/openxmla.xml");
     }
 
     public int getMdxQueryHousekeepMaxRows() {

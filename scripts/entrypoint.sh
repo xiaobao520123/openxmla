@@ -11,4 +11,4 @@ if [[ -z "${INSIGHT_HOME}" ]]; then
     echo "The env variable INSIGHT_HOME has not been set, set INSIGHT_HOME=$WORK_DIR/build"
 fi
 
-${INSIGHT_HOME}/run.sh
+${INSIGHT_HOME}/startup.sh
