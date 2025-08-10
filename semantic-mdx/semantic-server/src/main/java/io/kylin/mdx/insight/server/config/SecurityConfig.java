@@ -19,18 +19,11 @@
 
 package io.kylin.mdx.insight.server.config;
 
-import io.kylin.mdx.insight.common.SemanticConfig;
 import io.kylin.mdx.insight.core.service.AuthService;
-import io.kylin.mdx.insight.server.security.CustomAuthorizationRequestResolver;
-import io.kylin.mdx.insight.server.support.MdxLogoutHandler;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -44,34 +37,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity security) throws Exception {
-        if (!SemanticConfig.getInstance().isEnableAAD()) {
             security.cors().and()
                     .csrf().disable();
-            return;
-        }
-
-        security.oauth2Login(Customizer.withDefaults());
-        security.oauth2Client();
-        security.cors().and()
-                .csrf().disable();
-
-        security.logout()
-                .logoutRequestMatcher(new AntPathRequestMatcher("/api/logout", "GET"))
-                .logoutSuccessHandler(new MdxLogoutHandler(HttpStatus.OK, authService))
-                .clearAuthentication(true)
-                .invalidateHttpSession(true)
-                .deleteCookies();
-        security.logout()
-                .logoutSuccessUrl(SemanticConfig.getInstance().getAADLogoutUrl());
-
-        if (SemanticConfig.getInstance().isEnableAADInternalRedirect() && clientRegistrationRepository != null) {
-            security.oauth2Login()
-                    .authorizationEndpoint()
-                    .authorizationRequestResolver(new CustomAuthorizationRequestResolver(clientRegistrationRepository,
-                            OAuth2AuthorizationRequestRedirectFilter.DEFAULT_AUTHORIZATION_REQUEST_BASE_URI));
-            security.sessionManagement().sessionFixation().none();
-        }
     }
-
-
 }

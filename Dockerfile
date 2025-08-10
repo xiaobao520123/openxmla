@@ -30,6 +30,6 @@ RUN chmod +x /app/run.sh
 COPY scripts/entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 
-EXPOSE 7080
+EXPOSE 6068
 
 ENTRYPOINT ["/app/entrypoint.sh"]

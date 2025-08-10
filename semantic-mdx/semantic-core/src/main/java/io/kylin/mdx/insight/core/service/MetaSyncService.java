@@ -27,42 +27,6 @@ import io.kylin.mdx.insight.core.sync.*;
  */
 public interface MetaSyncService {
     /**
-     * add observers
-     *
-     * @param observer
-     * @Return null
-     * @throws SemanticException
-     */
-    void addObserver(Observer observer) throws SemanticException;
-
-    /**
-     * remove observers
-     *
-     * @param observer
-     * @Return null
-     * @throws SemanticException
-     */
-    void removeObserver(Observer observer) throws SemanticException;
-
-    /**
-     * file observers
-     *
-     * @param observer
-     * @Return null
-     * @throws SemanticException
-     */
-    void fireObservers(EventObject eventObject) throws SemanticException;
-
-    /**
-     * file observers async
-     *
-     * @param eventObject
-     * @Return null
-     * @throws SemanticException
-     */
-    void fireObserversAsync(EventObject eventObject) throws SemanticException;
-
-    /**
      * sync check
      *
      * @param null
@@ -70,15 +34,6 @@ public interface MetaSyncService {
      * @throws SemanticException
      */
     boolean syncCheck() throws SemanticException;
-
-    /**
-     * load License
-     *
-     * @param null
-     * @Return null
-     * @throws SemanticException
-     */
-    void loadKiLicense() throws SemanticException;
 
     /**
      * sync projects
@@ -117,15 +72,6 @@ public interface MetaSyncService {
     void syncUser() throws SemanticException;
 
     /**
-     * sync group
-     *
-     * @param null
-     * @Return null
-     * @throws SemanticException
-     */
-    void syncGroup();
-
-    /**
      * sync segment
      *
      * @param null
@@ -142,14 +88,4 @@ public interface MetaSyncService {
      * @throws SemanticException
      */
     void clearProjectCache(String project ) throws SemanticException;
-
-    /**
-     * sync project acl
-     *
-     * @param null
-     * @Return null
-     * @throws SemanticException
-     */
-    void syncProjectAclChange() throws SemanticException;
-
 }

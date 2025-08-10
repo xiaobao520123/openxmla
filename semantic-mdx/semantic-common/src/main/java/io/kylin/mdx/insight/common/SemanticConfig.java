@@ -78,14 +78,6 @@ public class SemanticConfig extends SemanticConfigBase {
         return getBooleanValue("insight.mdx.upper-user-name", true);
     }
 
-    public String getKylinHost() {
-        return getOptional("insight.kylin.host", "localhost");
-    }
-
-    public String getKylinPort() {
-        return getOptional("insight.kylin.port", "7070");
-    }
-
     public String getJDBC() {
         return getOptional("insight.mdx.mondrian.jdbc", "jdbc:sqlite:/Users/xiaobao/sqlite_warehouse.data");
     }
@@ -96,18 +88,6 @@ public class SemanticConfig extends SemanticConfigBase {
 
     public String getSchemaFilePath() {
         return getOptional("insight.mdx.mondrian.schema.path", "/Users/xiaobao/Projects/openxmla/build/conf/openxmla.xml");
-    }
-
-    public String getProjectPageSize() {
-        return getOptional("insight.semantic.meta.sync.project-page-size", "1000");
-    }
-
-    public String getUserPageSize() {
-        return getOptional("insight.semantic.meta.sync.user-page-size", "100000");
-    }
-
-    public boolean isModelVersionVerifyEnable() {
-        return getBooleanValue("insight.semantic.model.version.verify", false);
     }
 
     public int getMdxQueryHousekeepMaxRows() {
@@ -138,10 +118,6 @@ public class SemanticConfig extends SemanticConfigBase {
         return getIntValue("insight.semantic.cookie-age", 86400);
     }
 
-    public String getKylinProtocol() {
-        return getBooleanValue("insight.kylin.ssl", false) ? HTTPS_LITERAL : HTTP_LITERAL;
-    }
-
     public String getMdxProtocol() {
         return getBooleanValue("insight.semantic.ssl.enabled", false) ? HTTPS_LITERAL : HTTP_LITERAL;
     }
@@ -151,11 +127,7 @@ public class SemanticConfig extends SemanticConfigBase {
     }
 
     public String getMdxPort() {
-        return getOptional("insight.semantic.port", "7080");
-    }
-
-    public boolean isWhetherCheckDatasetConnect() {
-        return getBooleanValue("insight.semantic.checkout.dataset.connect", true);
+        return getOptional("insight.semantic.port", "6068");
     }
 
     public int getConnectTimeout() {
@@ -166,29 +138,10 @@ public class SemanticConfig extends SemanticConfigBase {
         return getIntValue("insight.semantic.socket.timeout", 10000);
     }
 
-    public int getConnectionRequestTimeout() {
-        return getIntValue("insight.semantic.connection.request.timeout", 8000);
-    }
-
-    public int getConnectionMaxTotal() {
-        return getIntValue("insight.semantic.connection.max-total", 200);
-    }
-
-    public boolean getConnectionManagerShared() {
-        return getBooleanValue("insight.semantic.connection.manager-shared", true);
-    }
-
     public boolean isEnableSyncSegment() {
         return getBooleanValue("insight.semantic.segment.sync.enable", true);
     }
 
-    public boolean isEnableQueryApi() {
-        return getBooleanValue("insight.mdx.query-api.enable", false);
-    }
-
-    public boolean isGrantVisibilityToCreator() {
-        return getBooleanValue("insight.mdx.grant-visibility-to-creator", true);
-    }
 
     public String getDatabaseType() {
         return getOptional("insight.database.type", "mysql");
@@ -216,22 +169,6 @@ public class SemanticConfig extends SemanticConfigBase {
 
     public long getQueryTimeout() {
         return getLongValue("insight.mdx.mondrian.rolap.queryTimeout", 300L);
-    }
-
-    public int getLogHttpDebugTime() {
-        return getIntValue("insight.semantic.log.http.debug", 0);
-    }
-
-    public int getLogHttpInfoTime() {
-        return getIntValue("insight.semantic.log.http.info", 50);
-    }
-
-    public int getLogHttpWarnTime() {
-        return getIntValue("insight.semantic.log.http.warn", 1000);
-    }
-
-    public int getLogHttpErrorTime() {
-        return getIntValue("insight.semantic.log.http.error", 10000);
     }
 
     public String getSessionName() {
@@ -274,10 +211,6 @@ public class SemanticConfig extends SemanticConfigBase {
         return getOptional("insight.semantic.reject.redirect-address", "");
     }
 
-    public long getDimensionHighCardinalitySize() {
-        return getLongValue("insight.semantic.reject.dimension.cardinality", 100000);
-    }
-
     public String getContextPath() {
         return Utils.endWithSlash(getOptional("insight.semantic.context-path", "/"));
     }
@@ -315,14 +248,6 @@ public class SemanticConfig extends SemanticConfigBase {
         return getIntValue("insight.semantic.zookeeper.session.timeout", 30000);
     }
 
-    public boolean isKylinAutoHeaderEnable() {
-        return getBooleanValue("insight.kylin.auto.header.enable", true);
-    }
-
-    public String isKylinOnlyNormalDimEnable() {
-        return getOptional("insight.kylin.only.normal.dim.enable", "false");
-    }
-
     public boolean isEnableQueryWithExecuteAs() {
         return getBooleanValue("insight.semantic.query-with-execute-as", false);
     }
@@ -333,50 +258,6 @@ public class SemanticConfig extends SemanticConfigBase {
 
     public boolean isEnableCompactResult() {
         return getBooleanValue("insight.semantic.compact-result", false);
-    }
-
-    public boolean isEnableAAD() {
-        return getBooleanValue(ConfigConstants.IS_ENABLE_AAD, false);
-    }
-
-    public boolean isEnableAADInternalRedirect() {
-        return getBooleanValue(ConfigConstants.IS_AAD_INTERNAL_REDIRECT, false);
-    }
-
-    public String getAADAuthenticationCallbackUrl() {
-        return getOptional(ConfigConstants.AAD_AUTHENTICATION_CALLBACK_URL, "");
-    }
-
-    public String getAADAuthenticationCodeUrl() {
-        return getOptional(ConfigConstants.AAD_AUTHENTICATION_CODE_URL, "");
-    }
-
-    public String getAADLoginUrl() {
-        return getContextPath() + getOptional(ConfigConstants.AAD_LOGIN_URL, "oauth2/authorization/azure");
-    }
-
-    public String getAADLogoutUrl() {
-        return getOptional(ConfigConstants.AAD_LOGOUT_URL, getAADServerUrl() + "common/oauth2/logout");
-    }
-
-    public String getAADServerUrl() {
-        return getOptional(ConfigConstants.AAD_SERVER_URL, "https://login.microsoftonline.com/");
-    }
-
-    public String getAADTenantId() {
-        return getOptional("azure.activedirectory.tenant-id", "");
-    }
-
-    public String getAADClientId() {
-        return getOptional("azure.activedirectory.client-id", "");
-    }
-
-    public String getAADClientSecret() {
-        return getOptional("azure.activedirectory.client-secret", "");
-    }
-
-    public String getAADRedirectUriTemplate() {
-        return getOptional(ConfigConstants.REDIRECT_URI_TEMPLATE, "");
     }
 
     /**
@@ -407,13 +288,6 @@ public class SemanticConfig extends SemanticConfigBase {
 
     public String getUploadFileMaxSize() {
         return getOptional("insight.mdx.upload.max-file-size", "20MB");
-    }
-
-    /**
-     * Whether to log jstack and jmap info
-     */
-    public boolean isLogJavaInfoEnable() {
-        return getBooleanValue("insight.semantic.log.java.info.enable", true);
     }
 
     public int getMetaSyncInterval() {

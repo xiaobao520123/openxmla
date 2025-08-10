@@ -79,15 +79,6 @@ public interface ProjectManager {
     Map<String, String> getUserAccessProjects(ConnectionInfo connInfo) throws SemanticException;
 
     /**
-     * do Project Acl
-     *
-     * @param realUser
-     * @param project
-     * @throws SemanticException
-     */
-    void doProjectAcl(String realUser, String project) throws SemanticException;
-
-    /**
      * get Project Names By Cache
      *
      * @return

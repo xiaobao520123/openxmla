@@ -4,11 +4,11 @@
 
         <!-- Time Dimension -->
         <Dimension name="Time">
-            <Hierarchy hasAll="true">
+            <Hierarchy name="Fiscal Time" hasAll="true" allMemberName="All">
                 <Level name="Year" column="year" type="Numeric" uniqueMembers="true" />
-                <Level name="Quarter" column="quarter" type="String" />
-                <Level name="Month" column="month" type="Numeric" />
-                <Level name="Day" column="day" type="Numeric" />
+                <Level name="Quarter" column="quarter" type="String" uniqueMembers="true" />
+                <Level name="Month" column="month" type="Numeric" uniqueMembers="true" />
+                <Level name="Day" column="day" type="Numeric" uniqueMembers="true" />
             </Hierarchy>
         </Dimension>
 
@@ -16,8 +16,8 @@
         <Dimension name="Location">
             <Hierarchy hasAll="true">
                 <Level name="Country" column="country" type="String" uniqueMembers="true"/>
-                <Level name="Region" column="region" type="String"/>
-                <Level name="City" column="city" type="String"/>
+                <Level name="Region" column="region" type="String" uniqueMembers="true"/>
+                <Level name="City" column="city" type="String" uniqueMembers="true"/>
             </Hierarchy>
         </Dimension>
 
@@ -25,16 +25,16 @@
         <Dimension name="Product">
             <Hierarchy hasAll="true">
                 <Level name="Category" column="category" type="String" uniqueMembers="true" />
-                <Level name="Subcategory" column="subcategory" type="String" />
-                <Level name="Brand" column="brand" type="String" />
-                <Level name="Product Name" column="product_name" type="String" />
+                <Level name="Subcategory" column="subcategory" type="String" uniqueMembers="true"/>
+                <Level name="Brand" column="brand" type="String" uniqueMembers="true"/>
+                <Level name="Product Name" column="product_name" type="String" uniqueMembers="true"/>
             </Hierarchy>
         </Dimension>
 
         <!-- Customer Dimension -->
         <Dimension name="Customer">
             <Hierarchy hasAll="true">
-                <Level name="Segment" column="customer_segment" type="String" />
+                <Level name="Segment" column="customer_segment" type="String" uniqueMembers="true"/>
                 <Level name="Customer Name" column="customer_name" type="String" uniqueMembers="true" />
             </Hierarchy>
         </Dimension>
@@ -42,21 +42,21 @@
         <!-- Sales Channel Dimension -->
         <Dimension name="Sales Channel">
             <Hierarchy hasAll="true">
-                <Level name="Channel" column="sales_channel" type="String" />
+                <Level name="Channel" column="sales_channel" type="String" uniqueMembers="true"/>
             </Hierarchy>
         </Dimension>
 
         <!-- Promotion Dimension -->
-        <Dimension name="Promotion">
-            <Hierarchy hasAll="true">
-                <Level name="Promotion Code" column="promotion_code" type="String" />
+        <Dimension name="Promotion Done">
+            <Hierarchy hasAll="true" name="Promotion" allMemberName="All">
+                <Level name="Promotion Code" column="promotion_code" type="String" uniqueMembers="true"/>
             </Hierarchy>
         </Dimension>
 
         <!-- Return Flag (Optional as a dimension) -->
         <Dimension name="Return Status">
-            <Hierarchy hasAll="true">
-                <Level name="Is Returned" column="is_returned" type="Numeric" nameColumn="is_returned" />
+            <Hierarchy name="Returned" hasAll="true" allMemberName="All">
+                <Level name="Is Returned" column="is_returned" type="Numeric" nameColumn="is_returned" uniqueMembers="true"/>
             </Hierarchy>
         </Dimension>
 

@@ -1,7 +1,7 @@
 spring:
   datasource:
     druid:
-      url: jdbc:mysql://${insight.database.ip}:${insight.database.port}/${insight.database.name}?useUnicode=true&characterEncoding=UTF8&autoReconnect=true&failOverReadOnly=false&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&useSSL=${insight.database.useSSL}&useTimezone=true&serverTimezone=UTC
+      url: jdbc:mysql://${insight.database.ip}:${insight.database.port}/${insight.database.name}?useUnicode=true&characterEncoding=UTF8&autoReconnect=true&failOverReadOnly=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&useSSL=${insight.database.useSSL}&useTimezone=true&serverTimezone=UTC
       username: ${insight.database.username}
       password: ${insight.database.password}
       initial-size: 2

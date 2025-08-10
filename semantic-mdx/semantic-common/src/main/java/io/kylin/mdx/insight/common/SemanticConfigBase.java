@@ -89,8 +89,6 @@ class SemanticConfigBase {
     }
 
     public void initConfig() {
-        this.kylinUsr = getOptional(SemanticConstants.KYLIN_USERNAME, "");
-        this.kylinPwd = getOptional(SemanticConstants.KYLIN_PASSWORD, "");
     }
 
     public String getInsightHome() {
