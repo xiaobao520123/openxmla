@@ -19,7 +19,6 @@
 
 package io.kylin.mdx.insight.common;
 
-import io.kylin.mdx.insight.common.constants.ConfigConstants;
 import io.kylin.mdx.insight.common.util.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;

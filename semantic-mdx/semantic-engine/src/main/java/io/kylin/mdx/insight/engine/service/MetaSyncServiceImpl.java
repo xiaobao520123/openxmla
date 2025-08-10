@@ -27,7 +27,6 @@ import io.kylin.mdx.insight.common.SemanticException;
 import io.kylin.mdx.insight.common.SemanticUserAndPwd;
 import io.kylin.mdx.insight.common.util.Utils;
 import io.kylin.mdx.insight.core.entity.UserInfo;
-import io.kylin.mdx.insight.core.manager.CubeManager;
 import io.kylin.mdx.insight.core.manager.ProjectManager;
 import io.kylin.mdx.insight.core.manager.SegmentManager;
 import io.kylin.mdx.insight.core.service.MetaSyncService;
@@ -57,9 +56,6 @@ import java.util.Set;
 @Service
 public class MetaSyncServiceImpl implements MetaSyncService {
     private static final SemanticConfig SEMANTIC_CONFIG = SemanticConfig.getInstance();
-
-    @Autowired
-    private CubeManager cubeManager;
 
     @Autowired
     private SegmentManager segmentManager;
