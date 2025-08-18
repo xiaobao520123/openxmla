@@ -36,12 +36,6 @@ public class SemanticAdapter {
     private SemanticAdapter() {
     }
 
-    public List<String> getNoCacheCubeNames(String project) {
-        List<String> cubeNames = new LinkedList<>();
-        cubeNames.add(this.CUBE);
-        return cubeNames;
-    }
-
     public List<String> getUserAuthority(ConnectionInfo connInfo) {
         List<String> authorities = new LinkedList<>();
         authorities.add(this.AUTHORITY);

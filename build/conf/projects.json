@@ -1,0 +1,18 @@
+{
+  "projects": [
+    {
+      "name": "SalesWarehouse",
+      "description": "A simple project to demonstrate openxmla",
+      "schema": "schema/SalesWarehouse.xml",
+      "jdbc_driver": "org.sqlite.JDBC",
+      "jdbc": "jdbc:sqlite:${INSIGHT_HOME}/data/SalesWarehouse.sqlite.data"
+    },
+    {
+      "name": "NewerHouse",
+      "description": "A more complex project to demonstrate openxmla",
+      "schema": "schema/NewerHouse.xml",
+      "jdbc_driver": "org.sqlite.JDBC",
+      "jdbc": "jdbc:sqlite:${INSIGHT_HOME}/data/SalesWarehouse.sqlite.data"
+    }
+  ]
+}
