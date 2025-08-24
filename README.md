@@ -26,7 +26,11 @@ docker run --rm -it --name openxmla -p 6068:6068 openxmla:latest
 
 # Features
 
-1. Support any kinds of database system that has a JDBC driver interface in SQL.
+1. Functionality
+  - [x] Support MDX query
+  - [x] Support XMLA protocol
+  - [x] Support multiple projects/datasets
+  - [x] Support customizable datasets
 
 2. Front-end support
   - [x] Microsoft Excel

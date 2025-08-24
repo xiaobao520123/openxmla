@@ -20,9 +20,9 @@ public class DatasourceUtils {
         return Utils.endWithSlash(datasourceDir) + prefix + "_" + project + "_datasources.xml";
     }
 
-    public static String getSchemaPath(String schemaDir, String username, String project, String catalog, String delegate) {
+    public static String getSchemaPath(String schemaDir, String username, String project, String delegate) {
         String prefix = delegate != null ? delegate.toUpperCase() : username.toUpperCase();
-        String schemaName = prefix + "_" + project + "_" + catalog + ".xml";
+        String schemaName = prefix + "_" + project + ".xml";
         return Utils.endWithSlash(schemaDir) + schemaName;
     }
 

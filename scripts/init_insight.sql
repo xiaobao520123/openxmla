@@ -19,6 +19,3 @@ CREATE TABLE `dataset` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_pk` (`project`,`dataset`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='semantic-dataset';
-
-INSERT INTO `dataset` (`project`, `dataset`, `status`, `create_user`, `create_time`, `modify_time`) VALUES
-('project', 'SalesWarehouse', 'NORMAL', 'admin', UNIX_TIMESTAMP() * 1000, UNIX_TIMESTAMP() * 1000);

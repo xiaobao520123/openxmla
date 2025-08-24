@@ -77,16 +77,8 @@ public class SemanticConfig extends SemanticConfigBase {
         return getBooleanValue("insight.mdx.upper-user-name", true);
     }
 
-    public String getJDBC() {
-        return getOptional("insight.mdx.mondrian.jdbc", "jdbc:sqlite:/app/data/SalesWarehouse.sqlite.data");
-    }
-
-    public String getJDBCDriver() {
-        return getOptional("insight.mdx.mondrian.jdbc.driver", "org.sqlite.JDBC");
-    }
-
-    public String getSchemaFilePath() {
-        return getOptional("insight.mdx.mondrian.schema.path", "/app/conf/openxmla.xml");
+    public String getProjectConfigurationPath() {
+        return getOptional("insight.mdx.project.path", "conf/projects.json");
     }
 
     public int getMdxQueryHousekeepMaxRows() {

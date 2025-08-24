@@ -1,15 +1,18 @@
 package io.kylin.mdx.web.xmla;
 
+import com.alibaba.fastjson.JSONArray;
 import io.kylin.mdx.insight.common.SemanticConfig;
 import io.kylin.mdx.insight.common.SemanticException;
 import io.kylin.mdx.insight.common.util.AESWithECBEncryptor;
 import io.kylin.mdx.core.datasource.MdCatalog;
 import io.kylin.mdx.core.datasource.MdDatasource;
 import mondrian.olap.Util;
+import com.alibaba.fastjson.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,9 +49,13 @@ public class XmlaDatasource {
 
     private final String project;
 
-    private final boolean force;
+    private Path schema;
 
-    private final static String catalogName = "SalesWarehouse";
+    private String jdbc;
+
+    private String jdbcDriver;
+
+    private final boolean force;
 
     public XmlaDatasource(String rootPath, String username, String password, String project,
                           String delegate, boolean forceRefresh) {
@@ -59,6 +66,7 @@ public class XmlaDatasource {
         this.delegate = delegate;
         this.force = forceRefresh;
         createSchemaDir();
+        loadProject();
     }
 
     public void initDatasource() {
@@ -77,20 +85,74 @@ public class XmlaDatasource {
         }
     }
 
+    private void loadProject() {
+        // Load project configuration (main set)
+        Path projectCfgPath = parseInsightHomePath(SemanticConfig.getInstance().getProjectConfigurationPath());
+        String content;
+        try {
+            content = new String(Files.readAllBytes(projectCfgPath), "UTF-8");
+        } catch (IOException e) {
+            throw new SemanticException("Can't read project configuration file: " + projectCfgPath, e);
+        }
+
+        // Find project
+        JSONObject projectInfo = null;
+        try {
+            JSONObject jProjects = JSONObject.parseObject(content);
+            JSONArray jProjectsArray = jProjects.getJSONArray("projects");
+            for (Object o : jProjectsArray) {
+                JSONObject obj = (JSONObject) o;
+                if (obj.getString("name").equals(project)) {
+                    projectInfo = obj;
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            throw new SemanticException("Can't parse project configuration file: " + projectCfgPath, e);
+        }
+        if (projectInfo == null) {
+            throw new SemanticException("Can't find project configuration: " + project);
+        }
+
+        // Parse project configuration
+        String schema = projectInfo.getString("schema");
+        if (schema == null) {
+            throw new SemanticException("Project schema path is null: " + project);
+        }
+        Path path = parseInsightHomePath(schema);
+
+        String jdbcUrl = projectInfo.getString("jdbc");
+        if (jdbcUrl == null) {
+            throw new SemanticException("Project jdbc url is null: " + project);
+        }
+        // Parse INSIGHT_HOME variable
+        if (jdbcUrl.contains("${INSIGHT_HOME}")) {
+            jdbcUrl = jdbcUrl.replace("${INSIGHT_HOME}", SemanticConfig.getInstance().getInsightHome());
+        }
+
+        String driver = projectInfo.getString("jdbc_driver");
+        if (driver == null) {
+            throw new SemanticException("Project jdbc driver is null: " + project);
+        }
+
+        this.schema = path;
+        this.jdbc = jdbcUrl;
+        this.jdbcDriver = driver;
+    }
+
     private void createMdnSchemas() {
         // Load schema
         String content;
         try {
-            String path = SemanticConfig.getInstance().getSchemaFilePath();
-            content = new String(Files.readAllBytes(Paths.get(path)), "UTF-8");
+            content = new String(Files.readAllBytes(schema), "UTF-8");
         } catch (IOException e) {
-            throw new SemanticException("Can't serialize schema:" + catalogName);
+            throw new SemanticException("Can't serialize schema:" + project);
         }
 
         byte[] schemaHashCode = Util.digestMd5(content);
-        String schemaFilePath = getSchemaPath(getSchemaDir(), username, project, catalogName, delegate);
+        String schemaFilePath = getSchemaPath(getSchemaDir(), username, project, delegate);
         XmlaDatasourceManager.getInstance().checkEqualsAndWrite(project, schemaFilePath, schemaHashCode,
-                content, "Can't create schema:%s", catalogName);
+                content, "Can't create schema:%s", project);
     }
 
     private void createDatasource() {
@@ -110,8 +172,8 @@ public class XmlaDatasource {
     private String buildDatasourceInfo() {
         // SQLite JDBC
         StringBuilder builder = new StringBuilder("Provider=mondrian;UseContentChecksum=true")
-                .append(";Jdbc=").append(SemanticConfig.getInstance().getJDBC())
-                .append(";JdbcDrivers=").append(SemanticConfig.getInstance().getJDBCDriver())
+                .append(";Jdbc=").append(jdbc)
+                .append(";JdbcDrivers=").append(jdbcDriver)
                 .append(";JdbcUser=").append(username)
                 .append(";JdbcPassword=").append(AESWithECBEncryptor.encrypt(password));
         if (delegate != null) {
@@ -122,8 +184,8 @@ public class XmlaDatasource {
 
     private List<MdCatalog> getMdCatalogs() {
         List<MdCatalog> mdCatalogs = new LinkedList<>();
-        String catalogPath = getSchemaPath(SCHEMA_DIR, username, project, catalogName, delegate);
-        MdCatalog mdCatalog = new MdCatalog(catalogName, catalogPath);
+        String catalogPath = getSchemaPath(SCHEMA_DIR, username, project, delegate);
+        MdCatalog mdCatalog = new MdCatalog(project, catalogPath);
         mdCatalogs.add(mdCatalog);
         return mdCatalogs;
     }
@@ -138,5 +200,9 @@ public class XmlaDatasource {
 
     private String getSchemaDir() {
         return this.rootPath + "/schema/";
+    }
+
+    private Path parseInsightHomePath(String... paths) {
+        return Paths.get(SemanticConfig.getInstance().getInsightHome(), paths);
     }
 }

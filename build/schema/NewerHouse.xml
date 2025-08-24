@@ -1,5 +1,5 @@
-<Schema name="SalesWarehouse" metamodelVersion="3">
-    <Cube name="SalesWarehouseCube">
+<Schema name="NewerHouse" metamodelVersion="3">
+    <Cube name="Newer House Cube">
         <Table name="sales_wide" />
 
         <!-- Time Dimension -->
