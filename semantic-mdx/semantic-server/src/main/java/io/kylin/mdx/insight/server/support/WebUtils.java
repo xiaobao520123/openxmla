@@ -27,9 +27,6 @@ import javax.servlet.http.HttpServletResponse;
 
 public class WebUtils {
 
-    private static final String LOGIN_USER_KEY = "user";
-    private static final String LOGIN_PWD_KEY = "pwd";
-
     public static HttpServletRequest getRequest() {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         assert attributes != null;
@@ -42,24 +39,4 @@ public class WebUtils {
         return attributes.getResponse();
     }
 
-    public static void putRequestAttribute(String name, Object o) {
-        HttpServletRequest request = getRequest();
-        request.setAttribute(name, o);
-    }
-
-    public static void setCurrentLoginUser(String username, String pwd) {
-        HttpServletRequest request = getRequest();
-        request.setAttribute(LOGIN_USER_KEY, username);
-        request.setAttribute(LOGIN_PWD_KEY, pwd);
-    }
-
-    public static String getCurrentLoginUser() {
-        HttpServletRequest request = getRequest();
-        return (String) request.getAttribute(LOGIN_USER_KEY);
-    }
-
-    public static String getCurrentUserPwd() {
-        HttpServletRequest request = getRequest();
-        return (String) request.getAttribute(LOGIN_PWD_KEY);
-    }
 }

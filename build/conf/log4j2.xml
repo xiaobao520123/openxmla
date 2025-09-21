@@ -69,7 +69,7 @@
         <logger name="mondrian" level="DEBUG" additivity="false">
             <appender-ref ref="mdx"/>
         </logger>
-        <logger name="mondrian.sql" level="debug" additivity="false">
+        <logger name="mondrian.sql" level="DEBUG" additivity="false">
             <appender-ref ref="mdx"/>
         </logger>
         <logger name="gateway" level="DEBUG" additivity="false">
