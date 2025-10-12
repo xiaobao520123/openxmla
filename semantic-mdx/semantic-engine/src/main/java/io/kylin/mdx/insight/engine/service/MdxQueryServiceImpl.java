@@ -66,7 +66,7 @@ public class MdxQueryServiceImpl implements MdxQueryService {
     @Override
     public String insertMdxQuery(MdxQuery mdxQuery) {
         int r = mdxQueryMapper.insertOneReturnId(mdxQuery);
-        if (r > 0 && mdxQuery.getId() != null) {
+        if (mdxQuery.getId() != null) {
             return SemanticConstants.RESP_SUC + ":" + mdxQuery.getId();
         } else {
             throw new SemanticException(Utils.formatStr("Inserting MDX_QUERY record gets a failure, r:%d, " +

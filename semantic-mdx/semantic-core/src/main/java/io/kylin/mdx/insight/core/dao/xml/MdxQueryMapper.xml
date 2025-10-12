@@ -28,7 +28,6 @@
         <result column="num" property="data" jdbcType="VARCHAR"/>
     </resultMap>
 
-
     <insert id="insertOneReturnId" parameterType="io.kylin.mdx.insight.core.entity.MdxQuery"
             useGeneratedKeys="true" keyProperty="id">
         insert into mdx_query
@@ -50,11 +49,19 @@
         select count(1) from mdx_query
     </select>
 
-    <select id="getDeleteUuid" resultType="java.lang.String">
+    <!-- MySQL 专用 -->
+    <select id="getDeleteUuid" resultType="java.lang.String" databaseId="mysql">
         select mdx_query_id
         from mdx_query
         order by id asc
         limit #{batch}
+    </select>
+
+    <!-- SQL Server 专用 -->
+    <select id="getDeleteUuid" resultType="java.lang.String" databaseId="sqlserver">
+        select top (#{batch}) mdx_query_id
+        from mdx_query
+        order by id asc
     </select>
 
     <delete id="deleteByUuids">
@@ -193,8 +200,9 @@
         </where>
     </select>
 
+    <!-- MySQL 专用 -->
     <select id="getRankingStatisticsDesc" parameterType="io.kylin.mdx.insight.core.entity.SelectBasicStatistics"
-            resultMap="RankingStatisticsMap">
+            resultMap="RankingStatisticsMap" databaseId="mysql">
         SELECT dataset_name, count(DISTINCT(mdx_query_id)) num
         FROM mdx_query
         <where>
@@ -211,8 +219,26 @@
         LIMIT #{count}
     </select>
 
+    <!-- SQL Server 专用 -->
+    <select id="getRankingStatisticsDesc" parameterType="io.kylin.mdx.insight.core.entity.SelectBasicStatistics"
+            resultMap="RankingStatisticsMap" databaseId="sqlserver">
+        SELECT top (#{count}) dataset_name, count(DISTINCT(mdx_query_id)) num
+        FROM mdx_query
+        <where>
+            project=#{projectName}
+            <if test="executeState != null">
+                and success = #{executeState}
+            </if>
+            and #{startTime} &lt;= start
+            and start &lt; #{endTime}
+        </where>
+        GROUP BY dataset_name
+        ORDER BY num DESC
+    </select>
+
+    <!-- MySQL 专用 -->
     <select id="getRankingStatisticsAsc" parameterType="io.kylin.mdx.insight.core.entity.SelectBasicStatistics"
-            resultMap="RankingStatisticsMap">
+            resultMap="RankingStatisticsMap" databaseId="mysql">
         SELECT dataset_name, count(DISTINCT(mdx_query_id)) num
         FROM mdx_query
         <where>
@@ -227,6 +253,23 @@
         ORDER BY num
         ASC
         LIMIT #{count}
+    </select>
+
+    <!-- SQL Server 专用 -->
+    <select id="getRankingStatisticsAsc" parameterType="io.kylin.mdx.insight.core.entity.SelectBasicStatistics"
+            resultMap="RankingStatisticsMap" databaseId="sqlserver">
+        SELECT top (#{count}) dataset_name, count(DISTINCT(mdx_query_id)) num
+        FROM mdx_query
+        <where>
+            project=#{projectName}
+            <if test="executeState != null">
+                and success = #{executeState}
+            </if>
+            and #{startTime} &lt;= start
+            and start &lt; #{endTime}
+        </where>
+        GROUP BY dataset_name
+        ORDER BY num ASC
     </select>
 
     <select id="getNodes" resultType="java.lang.String">

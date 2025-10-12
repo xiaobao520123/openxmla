@@ -38,7 +38,7 @@
     </select>
 
     <select id="selectLicenseNumWithLock" resultType="java.lang.Integer">
-        select count(1) from (select * from user_info where license_auth=1 for update) a;
+        select count(1) from (select * from user_info where license_auth=1) a;
     </select>
 
     <select id="selectLicenseNum" resultType="java.lang.Integer">
@@ -163,7 +163,7 @@
         select
         <include refid="Base_Column_List"/>
         from user_info
-        where conf_usr = 1 for update
+        where conf_usr = 1
     </select>
 
     <update id="updateConfUsr" parameterType="io.kylin.mdx.insight.core.entity.UserInfo">

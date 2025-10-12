@@ -8,8 +8,19 @@
         <result column="mdx_version" property="mdxVersion" jdbcType="VARCHAR"/>
     </resultMap>
 
-    <select id="getDatabaseVersion" resultType="java.lang.String">
+    <!-- 通用版本查询，适用于大多数数据库 -->
+    <select id="getDatabaseVersion" resultType="java.lang.String" databaseId="mysql">
         select version();
+    </select>
+
+    <!-- SQL Server 专用版本查询 -->
+    <select id="getDatabaseVersion" resultType="java.lang.String" databaseId="sqlserver">
+        SELECT @@VERSION
+    </select>
+
+    <!-- 其他数据库的备用版本查询 -->
+    <select id="getDatabaseVersion" resultType="java.lang.String">
+        SELECT version() FROM dual
     </select>
 
 </mapper>

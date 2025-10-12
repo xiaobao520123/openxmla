@@ -12,7 +12,7 @@ fi
 export MDX_HOME=${INSIGHT_HOME}
 export MDX_CONF=${INSIGHT_HOME}/conf
 
-DATABASE_TYPE=mysql
+DATABASE_TYPE=sqlserver
 SPRING_OPTS="$SPRING_OPTS -DINSIGHT_HOME=$INSIGHT_HOME -Dspring.config.name=insight,application -Dspring.profiles.active=$DATABASE_TYPE -Dspring.config.location=classpath:/,file:$INSIGHT_HOME/conf/"
 
 jvm_xms=-Xms3g

@@ -1,23 +1,25 @@
 FROM ubuntu:22.04
 
 RUN apt-get update && \
-    apt-get install -y mysql-server && \
+#    apt-get install -y mysql-server && \
     apt-get install -y openjdk-8-jdk wget && \
     rm -rf /var/lib/apt/lists/*
 
-RUN service mysql start && \
-    mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'openxmla';"
-
-COPY scripts/init_insight.sql /tmp/init_insight.sql
-
-RUN service mysql start && \
-    mysql -uroot -popenxmla < /tmp/init_insight.sql
+#RUN service mysql start && \
+#    mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'openxmla';"
+#
+#COPY scripts/init_insight.sql /tmp/init_insight.sql
+#
+#RUN service mysql start && \
+#    mysql -uroot -popenxmla < /tmp/init_insight.sql
 
 RUN mkdir /app
 WORKDIR /app
 
 RUN mkdir /app/lib
-RUN wget https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/8.4.0/mysql-connector-j-8.4.0.jar -O /app/lib/mysql-connector-j-8.4.0.jar
+#RUN wget https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/8.4.0/mysql-connector-j-8.4.0.jar -O /app/lib/mysql-connector-j-8.4.0.jar
+# Download mssql driver
+RUN wget https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/13.2.0.jre8/mssql-jdbc-13.2.0.jre8.jar -O /app/lib/mssql-jdbc-13.2.0.jre8.jar
 RUN wget https://repo1.maven.org/maven2/org/xerial/sqlite-jdbc/3.50.3.0/sqlite-jdbc-3.50.3.0.jar -O /app/lib/sqlite-jdbc-3.50.3.0.jar
 
 COPY build /app

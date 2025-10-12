@@ -40,7 +40,7 @@ public class SqlQueryServiceImpl implements SqlQueryService {
     @Override
     public String insertSqlQuery(SqlQuery sqlQuery) throws SemanticException {
         int r = sqlQueryMapper.insertOneReturnId(sqlQuery);
-        if (r > 0 && sqlQuery.getId() != null) {
+        if (sqlQuery.getId() != null) {
             return SemanticConstants.RESP_SUC + ":" + sqlQuery.getId();
         } else {
             throw new SemanticException(Utils.formatStr("Inserting SQL_QUERY record gets a failure, r:%d, " +
